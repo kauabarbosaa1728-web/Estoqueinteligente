@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+{% block conteudo %}
+
+<div class="cabecalho">
+    <div>
+        <h1>Histórico de movimentações</h1>
+        <p>Acompanhe as alterações realizadas no estoque.</p>
+    </div>
+</div>
+
+<section class="painel">
+    <div class="tabela-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>Data e hora (UTC)</th>
+                    <th>MAC Address</th>
+                    <th>Movimentação</th>
+                    <th>Funcionário</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in registros %}
+                <tr>
+                    <td>{{ r.data.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td><code>{{ r.mac }}</code></td>
+                    <td>{{ r.acao }}</td>
+                    <td>{{ r.usuario }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="vazio">
+                        Nenhuma movimentação registrada.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% endblock %}
