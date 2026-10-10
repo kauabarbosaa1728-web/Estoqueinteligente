@@ -1,0 +1,126 @@
+
+{% extends "base.html" %}
+{% block conteudo %}
+
+<div class="cabecalho">
+    <div>
+        <h1>🤖 Assistente Inteligente</h1>
+        <p>Converse com a inteligência artificial do seu estoque.</p>
+    </div>
+</div>
+
+<div class="chat-container">
+    <div class="chat-topo">
+        <div>
+            <strong>🤖 Estoque IA</strong>
+            <small>Assistente de gestão e telecomunicações</small>
+        </div>
+        <span class="status saldo">● Disponível</span>
+    </div>
+
+    <div class="chat-mensagens" id="mensagens">
+        <div class="mensagem ia">
+            Olá! 👋 Sou o assistente do Estoque Inteligente.
+
+            Posso ajudar a consultar equipamentos, MACs,
+            números de série, saldo, movimentações e
+            responder dúvidas sobre telecomunicações.
+
+            Como posso ajudar?
+        </div>
+    </div>
+
+    <div class="chat-sugestoes">
+        <button type="button"
+            onclick="perguntaRapida('Qual o total do estoque?')">
+            📦 Total do estoque
+        </button>
+
+        <button type="button"
+            onclick="perguntaRapida('Quais equipamentos estão em uso?')">
+            🔴 Equipamentos em uso
+        </button>
+
+        <button type="button"
+            onclick="perguntaRapida('Quais produtos estão disponíveis?')">
+            🟢 Produtos disponíveis
+        </button>
+    </div>
+
+    <form class="chat-form" id="form-chat">
+        <input
+            type="text"
+            id="pergunta"
+            placeholder="Pergunte alguma coisa ao assistente..."
+            maxlength="2000"
+            autocomplete="off"
+            required
+        >
+        <button type="submit" class="btn-principal">
+            Enviar ➤
+        </button>
+    </form>
+</div>
+
+<script>
+const formulario = document.getElementById("form-chat");
+const entrada = document.getElementById("pergunta");
+const mensagens = document.getElementById("mensagens");
+
+let enviando = false;
+
+function adicionarMensagem(texto, classe) {
+    const elemento = document.createElement("div");
+    elemento.className = "mensagem " + classe;
+    elemento.textContent = texto;
+    mensagens.appendChild(elemento);
+    mensagens.scrollTop = mensagens.scrollHeight;
+    return elemento;
+}
+
+async function enviarPergunta(texto) {
+    if (enviando || !texto.trim()) return;
+
+    enviando = true;
+    adicionarMensagem(texto, "usuario-chat");
+
+    entrada.value = "";
+    const carregando = adicionarMensagem(
+        "Consultando o estoque...", "ia"
+    );
+
+    try {
+        const resposta = await fetch("/api/assistente", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ pergunta: texto })
+        });
+
+        const dados = await resposta.json();
+
+        carregando.textContent = dados.resposta ||
+            dados.erro ||
+            "Não consegui responder agora.";
+
+    } catch (erro) {
+        carregando.textContent =
+            "Erro de conexão. Tente novamente.";
+    } finally {
+        enviando = false;
+        entrada.focus();
+    }
+}
+
+function perguntaRapida(texto) {
+    enviarPergunta(texto);
+}
+
+formulario.addEventListener("submit", function(evento) {
+    evento.preventDefault();
+    enviarPergunta(entrada.value);
+});
+</script>
+
+{% endblock %}
