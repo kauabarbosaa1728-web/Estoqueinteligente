@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque Inteligente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="logo">📦 Estoque Inteligente</div>
+            <p class="subtitulo">Gestão de Telecomunicações</p>
+
+            <nav>
+                <a href="{{ url_for('index') }}">📊 Dashboard e Estoque</a>
+                <a href="{{ url_for('index') }}#cadastro">➕ Cadastrar Equipamentos</a>
+                <a href="{{ url_for('historico') }}">📋 Histórico</a>
+                <a class="desativado">🤖 Assistente IA (em breve)</a>
+            </nav>
+
+            <div class="usuario">
+                <p>👤 {{ nome_usuario }}</p>
+                <form action="{{ url_for('logout') }}" method="POST">
+                    <button class="btn-sair">Sair da conta</button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="conteudo">
+            {% with mensagens = get_flashed_messages(with_categories=true) %}
+                {% for categoria, mensagem in mensagens %}
+                    <div class="alerta {{ categoria }}">{{ mensagem }}</div>
+                {% endfor %}
+            {% endwith %}
+
+            {% block conteudo %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
