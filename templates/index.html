@@ -5,47 +5,51 @@
 <div class="cabecalho">
     <div>
         <h1>Dashboard</h1>
-        <p>Gerencie seus equipamentos de telecomunicações</p>
+        <p>Controle inteligente de produtos, materiais e equipamentos.</p>
     </div>
-    <span class="data-atual">Estoque Inteligente</span>
+    <span>Estoque Inteligente</span>
 </div>
 
 <div class="cards">
     <div class="card">
-        <p>📦 Total de equipamentos</p>
+        <p>📦 Total cadastrado</p>
         <h2>{{ total }}</h2>
     </div>
     <div class="card">
-        <p>🟢 Equipamentos no saldo</p>
+        <p>🟢 Unidades no saldo</p>
         <h2 class="verde-texto">{{ saldo }}</h2>
     </div>
     <div class="card">
-        <p>🔴 Equipamentos em uso</p>
+        <p>🔴 Unidades em uso</p>
         <h2 class="vermelho-texto">{{ uso }}</h2>
     </div>
 </div>
 
 <section class="painel" id="cadastro">
-    <h2>➕ Cadastrar equipamentos</h2>
-    <p>Cadastre um MAC individualmente ou vários em lote.</p>
+    <h2>➕ Cadastro universal</h2>
+    <p>Cadastre equipamentos por MAC ou serial, ou materiais por quantidade.</p>
 
     <form action="{{ url_for('cadastrar') }}" method="POST">
+
+        <label>Como deseja cadastrar?</label>
+        <select name="modo" id="modo" onchange="alterarModo()">
+            <option value="mac">Equipamento por MAC</option>
+            <option value="serial">Equipamento por número de série</option>
+            <option value="material">Material ou produto sem MAC</option>
+        </select>
+
         <div class="form-grid">
             <div>
-                <label>Tipo de equipamento</label>
-                <input name="tipo" placeholder="ONU, roteador, switch..." required>
+                <label>Nome do equipamento ou material</label>
+                <input name="tipo" placeholder="ONU, cabo, fonte, roteador..." required>
             </div>
             <div>
-                <label>Marca</label>
-                <input name="marca" placeholder="Huawei, FiberHome..." required>
+                <label>Marca (opcional)</label>
+                <input name="marca" placeholder="Huawei, Intelbras...">
             </div>
             <div>
-                <label>Modelo</label>
-                <input name="modelo" placeholder="HG8245H" required>
-            </div>
-            <div>
-                <label>Número de série (cadastro individual)</label>
-                <input name="serial" placeholder="Opcional">
+                <label>Modelo (opcional)</label>
+                <input name="modelo" placeholder="HG8245H">
             </div>
             <div>
                 <label>Data de chegada</label>
@@ -53,22 +57,50 @@
             </div>
         </div>
 
-        <label>MAC Address (um por linha)</label>
-        <textarea name="macs" rows="5" required
-            placeholder="A4:5E:60:12:AB:CD&#10;A4:5E:60:12:AB:CE"></textarea>
+        <div id="campo-identificadores">
+            <label id="titulo-identificadores">MACs (um por linha)</label>
+            <textarea name="identificadores" id="identificadores"
+                rows="5" placeholder="A4:5E:60:12:AB:CD"></textarea>
+            <p>Você pode cadastrar vários equipamentos de uma vez.</p>
+        </div>
 
-        <button type="submit" class="btn-principal">
-            Cadastrar equipamentos
+        <div id="campo-material" style="display:none;">
+            <div class="form-grid">
+                <div>
+                    <label>Código interno (opcional)</label>
+                    <input name="codigo" placeholder="MAT-001">
+                </div>
+                <div>
+                    <label>Quantidade</label>
+                    <input type="number" name="quantidade"
+                           min="1" value="1">
+                </div>
+                <div>
+                    <label>Unidade de medida</label>
+                    <select name="unidade">
+                        <option value="un">Unidades</option>
+                        <option value="m">Metros</option>
+                        <option value="kg">Quilos</option>
+                        <option value="cx">Caixas</option>
+                        <option value="pct">Pacotes</option>
+                        <option value="rolo">Rolos</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-principal" type="submit">
+            Cadastrar no estoque
         </button>
     </form>
 </section>
 
 <section class="painel">
     <div class="cabecalho-tabela">
-        <h2>📋 Estoque de equipamentos</h2>
-        <form method="GET" action="{{ url_for('index') }}">
+        <h2>📋 Estoque geral</h2>
+        <form method="GET">
             <input name="busca" value="{{ busca }}"
-                   placeholder="Buscar MAC, marca ou modelo">
+                placeholder="Buscar nome, MAC, serial ou código">
             <button class="btn-busca">Buscar</button>
         </form>
     </div>
@@ -77,48 +109,76 @@
         <table>
             <thead>
                 <tr>
-                    <th>Equipamento</th>
-                    <th>MAC Address</th>
+                    <th>Produto</th>
+                    <th>Identificador</th>
                     <th>Chegada</th>
                     <th>Cadastro</th>
                     <th>Responsável</th>
-                    <th>Status</th>
-                    <th>Ação</th>
+                    <th>Saldo</th>
+                    <th>Em uso</th>
+                    <th>Situação</th>
+                    <th>Movimentação</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for e in equipamentos %}
-                <tr class="{{ 'linha-uso' if e.status == 'uso' else 'linha-saldo' }}">
+                {% set em_uso = e.quantidade_total - e.quantidade %}
+                <tr class="{{ 'linha-uso' if e.quantidade == 0 else 'linha-saldo' }}">
                     <td>
                         <strong>{{ e.tipo }}</strong>
-                        <small>{{ e.marca }} - {{ e.modelo }}</small>
+                        <small>{{ e.marca }} {{ e.modelo }}</small>
                     </td>
-                    <td><code>{{ e.mac }}</code></td>
+                    <td>
+                        <code>
+                            {{ e.mac or e.serial or e.codigo or ('ID-' ~ e.id) }}
+                        </code>
+                    </td>
                     <td>{{ e.chegada.strftime('%d/%m/%Y') }}</td>
                     <td>{{ e.cadastro.strftime('%d/%m/%Y %H:%M') }}</td>
                     <td>{{ e.cadastrado_por }}</td>
+                    <td class="verde-texto">
+                        <strong>{{ e.quantidade }} {{ e.unidade }}</strong>
+                    </td>
+                    <td class="vermelho-texto">
+                        <strong>{{ em_uso }} {{ e.unidade }}</strong>
+                    </td>
                     <td>
-                        {% if e.status == 'saldo' %}
-                            <span class="status saldo">● No saldo</span>
-                        {% else %}
+                        {% if e.quantidade == 0 %}
                             <span class="status uso">● Em uso</span>
+                        {% elif em_uso > 0 %}
+                            <span class="status saldo">● Saldo parcial</span>
+                        {% else %}
+                            <span class="status saldo">● No saldo</span>
                         {% endif %}
                     </td>
                     <td>
-                        <form action="{{ url_for('alterar_status', id=e.id) }}"
-                              method="POST">
-                            {% if e.status == 'saldo' %}
-                                <button class="btn-uso">Marcar em uso</button>
-                            {% else %}
-                                <button class="btn-saldo">Devolver ao saldo</button>
+                        <form method="POST"
+                              action="{{ url_for('alterar_status', id=e.id) }}"
+                              class="movimentacao">
+                            <input type="number" name="quantidade"
+                                   min="1" value="1" required>
+
+                            {% if e.quantidade > 0 %}
+                                <button name="acao" value="retirar"
+                                        class="btn-uso">
+                                    Retirar
+                                </button>
+                            {% endif %}
+
+                            {% if em_uso > 0 %}
+                                <button name="acao" value="devolver"
+                                        class="btn-saldo">
+                                    Devolver
+                                </button>
                             {% endif %}
                         </form>
                     </td>
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="7" class="vazio">
-                        Nenhum equipamento encontrado.
+                    <td colspan="9" class="vazio">
+                        Nenhum produto encontrado.
                     </td>
                 </tr>
                 {% endfor %}
@@ -126,5 +186,35 @@
         </table>
     </div>
 </section>
+
+<script>
+function alterarModo() {
+    const modo = document.getElementById("modo").value;
+    const campoMaterial = document.getElementById("campo-material");
+    const campoIds = document.getElementById("campo-identificadores");
+    const titulo = document.getElementById("titulo-identificadores");
+    const identificadores = document.getElementById("identificadores");
+
+    if (modo === "material") {
+        campoMaterial.style.display = "block";
+        campoIds.style.display = "none";
+        identificadores.required = false;
+    } else {
+        campoMaterial.style.display = "none";
+        campoIds.style.display = "block";
+        identificadores.required = true;
+
+        titulo.textContent = modo === "mac"
+            ? "MACs (um por linha)"
+            : "Números de série (um por linha)";
+
+        identificadores.placeholder = modo === "mac"
+            ? "A4:5E:60:12:AB:CD"
+            : "SN123456789";
+    }
+}
+
+alterarModo();
+</script>
 
 {% endblock %}
