@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Estoque | KBSISTEMAS{% endblock %}
+{% block page_heading %}Controle de estoque{% endblock %}
+
+{% block content %}
+<div class="page-intro">
+    <div>
+        <span class="eyebrow">INVENTÁRIO</span>
+        <h1>Controle de estoque</h1>
+        <p>Consulte os materiais e registre entradas, saídas e devoluções.</p>
+    </div>
+    <a href="{{ url_for('cadastro_item') }}" class="btn btn-primary">＋ Novo item</a>
+</div>
+
+<section class="panel">
+    <form method="GET" action="{{ url_for('estoque') }}" class="filter-bar">
+        <div class="search-field">
+            <span>⌕</span>
+            <input type="search" name="q" value="{{ q or '' }}" placeholder="Buscar por nome ou código...">
+        </div>
+        <select name="status" aria-label="Filtrar por status">
+            <option value="">Todos os status</option>
+            <option value="disponivel" {% if status == 'disponivel' %}selected{% endif %}>Disponível</option>
+            <option value="baixo" {% if status == 'baixo' %}selected{% endif %}>Estoque baixo</option>
+            <option value="zerado" {% if status == 'zerado' %}selected{% endif %}>Sem estoque</option>
+        </select>
+        <button type="submit" class="btn btn-secondary">Filtrar</button>
+        <a href="{{ url_for('estoque') }}" class="btn btn-ghost">Limpar</a>
+    </form>
+
+    {% if items %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Código</th>
+                    <th>Tipo / Categoria</th>
+                    <th>Quantidade</th>
+                    <th>Valor unitário</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+                <tr>
+                    <td><strong>{{ item.name }}</strong><small class="table-subtitle">{{ item.supplier or 'Fornecedor não informado' }}</small></td>
+                    <td><span class="code-pill">{{ item.code }}</span></td>
+                    <td>{{ item.item_type or 'Material' }}<small class="table-subtitle">{{ item.category or 'Sem categoria' }}</small></td>
+                    <td><strong>{{ item.quantity }}</strong> {{ item.unit or 'un.' }}</td>
+                    <td>R$ {{ "%.2f"|format(item.unit_value or 0) }}</td>
+                    <td>
+                        {% if item.quantity <= 0 %}
+                            <span class="badge badge-danger">Sem estoque</span>
+                        {% elif item.quantity <= 5 %}
+                            <span class="badge badge-warning">Estoque baixo</span>
+                        {% else %}
+                            <span class="badge badge-success">Disponível</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <details class="action-dropdown">
+                            <summary>Movimentar ▾</summary>
+                            <form method="POST" action="{{ url_for('acao_item', item_id=item.id) }}" class="movement-form">
+                                <label for="action-{{ item.id }}">Operação</label>
+                                <select id="action-{{ item.id }}" name="action" required>
+                                    <option value="entrada">Entrada / Reposição</option>
+                                    <option value="saida">Retirada de material</option>
+                                    <option value="uso">Uso de equipamento</option>
+                                    <option value="devolucao">Devolução</option>
+                                </select>
+                                <label for="quantity-{{ item.id }}">Quantidade</label>
+                                <input id="quantity-{{ item.id }}" name="quantity" type="number" min="1" value="1" required>
+                                <label for="details-{{ item.id }}">Observação</label>
+                                <input id="details-{{ item.id }}" name="details" type="text" placeholder="Motivo ou responsável">
+                                <button class="btn btn-primary btn-full" type="submit" data-confirm="Confirmar esta movimentação?">Confirmar</button>
+                            </form>
+                        </details>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <span>▤</span>
+        <h3>Nenhum item encontrado</h3>
+        <p>Cadastre um item ou altere os filtros de pesquisa.</p>
+        <a href="{{ url_for('cadastro_item') }}" class="btn btn-primary">Cadastrar primeiro item</a>
+    </div>
+    {% endif %}
+    <div class="table-footer">Itens exibidos: {{ items|length }}</div>
+</section>
+{% endblock %}
