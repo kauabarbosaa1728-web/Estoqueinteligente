@@ -50,7 +50,7 @@ class Equipamento(db.Model):
     tipo = db.Column(db.String(100), nullable=False)
     marca = db.Column(db.String(100), nullable=False, default="")
     modelo = db.Column(db.String(100), nullable=False, default="")
-    mac = db.Column(db.String(17), unique=True, nullable=True)
+    mac = db.Column(db.String(120), unique=True, nullable=True)
     serial = db.Column(db.String(120), nullable=True)
     codigo = db.Column(db.String(120), nullable=True)
     unidade = db.Column(db.String(30), default="un")
@@ -72,7 +72,6 @@ class Historico(db.Model):
 
 
 def migrar_banco():
-    # Preserva as tabelas e os registros existentes.
     db.create_all()
 
     colunas = {
@@ -92,6 +91,11 @@ def migrar_banco():
         conexao.execute(text(
             "ALTER TABLE equipamento "
             "ALTER COLUMN mac DROP NOT NULL"
+        ))
+
+        conexao.execute(text(
+            "ALTER TABLE equipamento "
+            "ALTER COLUMN mac TYPE VARCHAR(120)"
         ))
 
         conexao.execute(text(
@@ -130,19 +134,17 @@ def login_obrigatorio(funcao):
 
 
 def normalizar_mac(valor):
-    if not valor or not valor.strip():
+    # Aceita qualquer formato de identificador.
+    # Não exige 12 caracteres nem formato hexadecimal.
+    if not valor:
         return None
 
-    caracteres = re.sub(
-        r"[^0-9A-Fa-f]", "", valor
-    ).upper()
+    identificador = valor.strip().upper()
 
-    if not re.fullmatch(r"[0-9A-F]{12}", caracteres):
+    if not identificador or len(identificador) > 120:
         return None
 
-    return ":".join(
-        caracteres[i:i + 2] for i in range(0, 12, 2)
-    )
+    return identificador
 
 
 def identificador(item):
@@ -300,7 +302,7 @@ def cadastrar():
             valores = [normalizar_mac(x) for x in linhas]
 
             if None in valores:
-                flash("Um ou mais MACs são inválidos.", "erro")
+                flash("Identificador vazio ou maior que 120 caracteres.", "erro")
                 return redirect(url_for("index"))
 
             existentes = {
@@ -308,14 +310,20 @@ def cadastrar():
                     Equipamento.mac.in_(valores)
                 ).all()
             }
+
         elif modo == "serial":
-            valores = linhas
+            valores = [x.strip().upper() for x in linhas]
+
+            if any(len(x) > 120 for x in valores):
+                flash("Serial maior que 120 caracteres.", "erro")
+                return redirect(url_for("index"))
 
             existentes = {
                 e.serial for e in Equipamento.query.filter(
                     Equipamento.serial.in_(valores)
                 ).all()
             }
+
         else:
             flash("Tipo de cadastro inválido.", "erro")
             return redirect(url_for("index"))
@@ -353,9 +361,11 @@ def cadastrar():
     try:
         db.session.commit()
         flash("Cadastro realizado com sucesso!", "sucesso")
+
     except IntegrityError:
         db.session.rollback()
         flash("Identificador já cadastrado.", "erro")
+
     except Exception:
         db.session.rollback()
         app.logger.exception("Erro no cadastro")
@@ -402,9 +412,7 @@ def alterar_status(id):
         flash("Ação inválida.", "erro")
         return redirect(url_for("index"))
 
-    produto.status = (
-        "saldo" if produto.quantidade > 0 else "uso"
-    )
+    produto.status = "saldo" if produto.quantidade > 0 else "uso"
 
     db.session.add(Historico(
         equipamento_id=produto.id,
