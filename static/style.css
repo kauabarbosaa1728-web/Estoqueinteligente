@@ -342,3 +342,35 @@ td small {
         align-items: stretch;
     }
 }
+
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dce3ed;
+    border-radius: 9px;
+    background: #fff;
+    color: #17233b;
+    font: inherit;
+}
+
+.movimentacao {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.movimentacao input {
+    width: 65px;
+    min-width: 65px;
+}
+
+.movimentacao button {
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .movimentacao {
+        flex-wrap: wrap;
+    }
+}
+
