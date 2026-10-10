@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Cadastrar item | KBSISTEMAS{% endblock %}
+{% block page_heading %}Cadastro de item{% endblock %}
+
+{% block content %}
+<div class="page-intro">
+    <div>
+        <span class="eyebrow">GESTÃO DE MATERIAIS</span>
+        <h1>Cadastrar novo item</h1>
+        <p>Preencha os dados para adicionar um material ao estoque.</p>
+    </div>
+    <a href="{{ url_for('estoque') }}" class="btn btn-secondary">← Voltar ao estoque</a>
+</div>
+
+<section class="panel form-panel">
+    <div class="panel-heading">
+        <div><h2>Informações do item</h2><p>Os campos marcados com * são obrigatórios.</p></div>
+        <span class="panel-heading-icon">▤</span>
+    </div>
+
+    <form method="POST" action="{{ url_for('cadastro_item') }}" class="form-stack">
+        <div class="form-grid">
+            <div class="field">
+                <label for="code">Código do item *</label>
+                <input id="code" name="code" type="text" placeholder="Ex.: MAT-001" required maxlength="80">
+            </div>
+            <div class="field">
+                <label for="name">Nome do item *</label>
+                <input id="name" name="name" type="text" placeholder="Nome do material" required maxlength="160">
+            </div>
+            <div class="field">
+                <label for="item_type">Tipo de item *</label>
+                <select id="item_type" name="item_type" required>
+                    <option value="material">Material</option>
+                    <option value="equipamento">Equipamento</option>
+                    <option value="ferramenta">Ferramenta</option>
+                    <option value="consumivel">Consumível</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="category">Categoria</label>
+                <input id="category" name="category" type="text" placeholder="Ex.: Elétrica, escritório..." maxlength="100">
+            </div>
+            <div class="field">
+                <label for="supplier">Fornecedor</label>
+                <input id="supplier" name="supplier" type="text" placeholder="Nome do fornecedor" maxlength="160">
+            </div>
+            <div class="field">
+                <label for="unit_value">Valor unitário (R$)</label>
+                <input id="unit_value" name="unit_value" type="number" min="0" step="0.01" value="0.00" placeholder="0,00">
+            </div>
+            <div class="field">
+                <label for="entry_date">Data de entrada</label>
+                <input id="entry_date" name="entry_date" type="date">
+            </div>
+            <div class="field">
+                <label for="quantity">Quantidade inicial *</label>
+                <input id="quantity" name="quantity" type="number" min="0" step="1" value="0" required>
+            </div>
+            <div class="field field-full">
+                <label for="notes">Observações</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Informações adicionais sobre o item..."></textarea>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{{ url_for('estoque') }}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Salvar item <span>→</span></button>
+        </div>
+    </form>
+</section>
+{% endblock %}
