@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Assistente IA | KBSISTEMAS{% endblock %}
+{% block page_heading %}Assistente inteligente{% endblock %}
+
+{% block content %}
+<div class="page-intro">
+    <div>
+        <span class="eyebrow">KBSISTEMAS INTELLIGENCE</span>
+        <h1>Assistente inteligente</h1>
+        <p>Faça perguntas sobre estoque, materiais e movimentações.</p>
+    </div>
+    <span class="ai-status"><span class="status-dot"></span> Assistente disponível</span>
+</div>
+
+<section class="chat-panel panel">
+    <div class="chat-header">
+        <div class="ai-avatar">✦</div>
+        <div><h2>Assistente KBSISTEMAS</h2><p>Seu apoio para consultar o estoque</p></div>
+        <span class="chat-online">ONLINE</span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="chat-message assistant-message">
+            <div class="message-avatar">KB</div>
+            <div class="message-body">
+                <div class="message-author">Assistente KBSISTEMAS</div>
+                <div class="message-bubble">Olá, {{ session.get('full_name', 'usuário').split(' ')[0] }}! Como posso ajudar? Você pode perguntar sobre os itens cadastrados, quantidades disponíveis ou movimentações do estoque.</div>
+            </div>
+        </div>
+
+        {% if question %}
+        <div class="chat-message user-message">
+            <div class="message-body">
+                <div class="message-author">Você</div>
+                <div class="message-bubble">{{ question }}</div>
+            </div>
+            <div class="message-avatar user-avatar">{{ (session.get('full_name') or 'U')[0]|upper }}</div>
+        </div>
+        {% endif %}
+
+        {% if answer %}
+        <div class="chat-message assistant-message">
+            <div class="message-avatar">KB</div>
+            <div class="message-body">
+                <div class="message-author">Assistente KBSISTEMAS</div>
+                <div class="message-bubble answer-text">{{ answer }}</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="suggestions">
+        <span>Sugestões:</span>
+        <button type="button" class="suggestion-chip" data-question="Quais itens estão com estoque baixo?">Itens com estoque baixo</button>
+        <button type="button" class="suggestion-chip" data-question="Quantos itens existem no estoque?">Resumo do estoque</button>
+        <button type="button" class="suggestion-chip" data-question="Como faço uma entrada de material?">Como registrar entrada?</button>
+    </div>
+
+    <form method="POST" action="{{ url_for('chat_ia') }}" class="chat-form" id="chatForm">
+        <textarea id="question" name="question" rows="2" maxlength="2000" placeholder="Digite sua pergunta sobre o estoque..." required>{{ question or '' }}</textarea>
+        <button type="submit" class="btn btn-primary chat-send">Enviar <span>➤</span></button>
+    </form>
+    <p class="chat-disclaimer">As respostas auxiliam na consulta. Confira os registros do sistema antes de tomar decisões importantes.</p>
+</section>
+{% endblock %}
