@@ -1,0 +1,130 @@
+
+{% extends "base.html" %}
+{% block conteudo %}
+
+<div class="cabecalho">
+    <div>
+        <h1>Dashboard</h1>
+        <p>Gerencie seus equipamentos de telecomunicações</p>
+    </div>
+    <span class="data-atual">Estoque Inteligente</span>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <p>📦 Total de equipamentos</p>
+        <h2>{{ total }}</h2>
+    </div>
+    <div class="card">
+        <p>🟢 Equipamentos no saldo</p>
+        <h2 class="verde-texto">{{ saldo }}</h2>
+    </div>
+    <div class="card">
+        <p>🔴 Equipamentos em uso</p>
+        <h2 class="vermelho-texto">{{ uso }}</h2>
+    </div>
+</div>
+
+<section class="painel" id="cadastro">
+    <h2>➕ Cadastrar equipamentos</h2>
+    <p>Cadastre um MAC individualmente ou vários em lote.</p>
+
+    <form action="{{ url_for('cadastrar') }}" method="POST">
+        <div class="form-grid">
+            <div>
+                <label>Tipo de equipamento</label>
+                <input name="tipo" placeholder="ONU, roteador, switch..." required>
+            </div>
+            <div>
+                <label>Marca</label>
+                <input name="marca" placeholder="Huawei, FiberHome..." required>
+            </div>
+            <div>
+                <label>Modelo</label>
+                <input name="modelo" placeholder="HG8245H" required>
+            </div>
+            <div>
+                <label>Número de série (cadastro individual)</label>
+                <input name="serial" placeholder="Opcional">
+            </div>
+            <div>
+                <label>Data de chegada</label>
+                <input type="date" name="chegada" required>
+            </div>
+        </div>
+
+        <label>MAC Address (um por linha)</label>
+        <textarea name="macs" rows="5" required
+            placeholder="A4:5E:60:12:AB:CD&#10;A4:5E:60:12:AB:CE"></textarea>
+
+        <button type="submit" class="btn-principal">
+            Cadastrar equipamentos
+        </button>
+    </form>
+</section>
+
+<section class="painel">
+    <div class="cabecalho-tabela">
+        <h2>📋 Estoque de equipamentos</h2>
+        <form method="GET" action="{{ url_for('index') }}">
+            <input name="busca" value="{{ busca }}"
+                   placeholder="Buscar MAC, marca ou modelo">
+            <button class="btn-busca">Buscar</button>
+        </form>
+    </div>
+
+    <div class="tabela-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>Equipamento</th>
+                    <th>MAC Address</th>
+                    <th>Chegada</th>
+                    <th>Cadastro</th>
+                    <th>Responsável</th>
+                    <th>Status</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in equipamentos %}
+                <tr class="{{ 'linha-uso' if e.status == 'uso' else 'linha-saldo' }}">
+                    <td>
+                        <strong>{{ e.tipo }}</strong>
+                        <small>{{ e.marca }} - {{ e.modelo }}</small>
+                    </td>
+                    <td><code>{{ e.mac }}</code></td>
+                    <td>{{ e.chegada.strftime('%d/%m/%Y') }}</td>
+                    <td>{{ e.cadastro.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{{ e.cadastrado_por }}</td>
+                    <td>
+                        {% if e.status == 'saldo' %}
+                            <span class="status saldo">● No saldo</span>
+                        {% else %}
+                            <span class="status uso">● Em uso</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('alterar_status', id=e.id) }}"
+                              method="POST">
+                            {% if e.status == 'saldo' %}
+                                <button class="btn-uso">Marcar em uso</button>
+                            {% else %}
+                                <button class="btn-saldo">Devolver ao saldo</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="vazio">
+                        Nenhum equipamento encontrado.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% endblock %}
