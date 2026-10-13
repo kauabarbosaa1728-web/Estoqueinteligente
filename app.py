@@ -55,6 +55,9 @@ db = SQLAlchemy(app)
 
 FUSO_BRASILIA = ZoneInfo("America/Sao_Paulo")
 
+EQUIPAMENTOS_POR_PAGINA = 50
+MAX_EQUIPAMENTOS_POR_PAGINA = 100
+
 
 def agora():
     return datetime.now(timezone.utc)
@@ -370,13 +373,19 @@ def serializar_equipamento(item):
     }
 
 
-def consultar_equipamentos(busca=""):
+# ==========================================
+# CONSULTA PAGINADA DO ESTOQUE
+# ==========================================
+
+def montar_consulta_equipamentos(busca=""):
     """
-    Consulta os equipamentos utilizando
-    o mesmo filtro do Dashboard original.
+    Monta uma consulta ao banco inteiro.
+    Nao aplica limite fixo de registros.
     """
 
     consulta = Equipamento.query
+
+    busca = str(busca or "").strip()[:120]
 
     if busca:
         termo = f"%{busca}%"
@@ -390,10 +399,55 @@ def consultar_equipamentos(busca=""):
             Equipamento.codigo.ilike(termo)
         ))
 
+    return consulta
+
+
+def consultar_equipamentos(
+    busca="",
+    pagina=1,
+    por_pagina=EQUIPAMENTOS_POR_PAGINA
+):
+    """
+    Retorna uma pagina de equipamentos.
+
+    A busca acontece em todos os registros
+    cadastrados no PostgreSQL.
+    """
+
+    try:
+        pagina = int(pagina)
+    except (ValueError, TypeError):
+        pagina = 1
+
+    try:
+        por_pagina = int(por_pagina)
+    except (ValueError, TypeError):
+        por_pagina = EQUIPAMENTOS_POR_PAGINA
+
+    pagina = max(1, pagina)
+
+    por_pagina = max(
+        1,
+        min(
+            por_pagina,
+            MAX_EQUIPAMENTOS_POR_PAGINA
+        )
+    )
+
+    consulta = montar_consulta_equipamentos(busca)
+
     return consulta.order_by(
         Equipamento.id.desc()
-    ).limit(2000).all()
+    ).paginate(
+        page=pagina,
+        per_page=por_pagina,
+        error_out=False
+    )
 
+
+# ==========================================
+# INDICADORES DO DASHBOARD
+# ==========================================
 
 def consultar_indicadores():
     """
@@ -441,6 +495,10 @@ def consultar_indicadores():
     }
 
 
+# ==========================================
+# MOVIMENTACOES RECENTES
+# ==========================================
+
 def consultar_movimentacoes(limite=6):
     """
     Retorna as movimentacoes mais recentes.
@@ -479,6 +537,10 @@ def consultar_movimentacoes(limite=6):
 
     return movimentacoes
 
+
+# ==========================================
+# CALENDARIO
+# ==========================================
 
 def consultar_calendario(ano, mes):
     """
@@ -623,21 +685,27 @@ def index():
 
     busca = request.args.get(
         "busca", ""
-    ).strip()
+    ).strip()[:120]
 
-    equipamentos = consultar_equipamentos(
-        busca
+    paginacao = consultar_equipamentos(
+        busca=busca,
+        pagina=1,
+        por_pagina=EQUIPAMENTOS_POR_PAGINA
     )
 
     indicadores = consultar_indicadores()
 
     return render_template(
         "index.html",
-        equipamentos=equipamentos,
+        equipamentos=paginacao.items,
         total=indicadores["total"],
         saldo=indicadores["saldo"],
         uso=indicadores["uso"],
-        busca=busca
+        busca=busca,
+        paginacao=paginacao,
+        pagina_atual=paginacao.page,
+        total_paginas=paginacao.pages,
+        total_registros=paginacao.total
     )
 
 
@@ -677,33 +745,71 @@ def api_dashboard():
 
 
 # ==========================================
-# API DA TABELA DE ESTOQUE
+# API PAGINADA DO ESTOQUE
 # ==========================================
 
 @app.route("/api/estoque")
 @login_obrigatorio
 def api_estoque():
     """
-    Permite atualizar a tabela do estoque
-    sem recarregar a pagina inteira.
+    Atualiza a tabela do estoque.
+
+    Aceita:
+      busca=roteador
+      pagina=1
+      por_pagina=50
+
+    Mantem os campos antigos da API
+    e acrescenta os dados de paginacao.
     """
 
     busca = request.args.get(
         "busca", ""
     ).strip()[:120]
 
-    equipamentos = consultar_equipamentos(
-        busca
+    pagina = request.args.get(
+        "pagina",
+        default=1,
+        type=int
+    )
+
+    por_pagina = request.args.get(
+        "por_pagina",
+        default=EQUIPAMENTOS_POR_PAGINA,
+        type=int
+    )
+
+    paginacao = consultar_equipamentos(
+        busca=busca,
+        pagina=pagina,
+        por_pagina=por_pagina
     )
 
     itens = [
         serializar_equipamento(item)
-        for item in equipamentos
+        for item in paginacao.items
     ]
 
     return jsonify({
         "itens": itens,
         "quantidade_registros": len(itens),
+        "total_registros": paginacao.total,
+        "pagina": paginacao.page,
+        "pagina_atual": paginacao.page,
+        "por_pagina": paginacao.per_page,
+        "total_paginas": paginacao.pages,
+        "tem_proxima": paginacao.has_next,
+        "tem_anterior": paginacao.has_prev,
+        "proxima_pagina": (
+            paginacao.next_num
+            if paginacao.has_next
+            else None
+        ),
+        "pagina_anterior": (
+            paginacao.prev_num
+            if paginacao.has_prev
+            else None
+        ),
         "atualizado_em": datetime.now(
             FUSO_BRASILIA
         ).isoformat()
@@ -1288,3 +1394,4 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=False)
+
