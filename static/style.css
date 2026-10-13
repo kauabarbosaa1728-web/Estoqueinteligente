@@ -2850,3 +2850,419 @@ td code {
     }
 
 }
+
+/* ==========================================
+   LOGIN PREMIUM - ESTOQUE INTELIGENTE
+========================================== */
+
+body.login-premium {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #091c38;
+    color: #fff;
+}
+
+.login-premium-layout {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(390px, .9fr);
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 55px clamp(28px, 6vw, 110px);
+    overflow: hidden;
+
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(5, 17, 39, .91) 0%,
+            rgba(8, 26, 58, .80) 42%,
+            rgba(7, 22, 48, .38) 100%
+        ),
+        url("fundo-login.png");
+
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.login-premium-layout::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+        circle at 65% 50%,
+        rgba(47, 116, 255, .13),
+        transparent 55%
+    );
+}
+
+.login-premium-apresentacao,
+.login-premium-area-form {
+    position: relative;
+    z-index: 1;
+}
+
+/* ==========================================
+   APRESENTACAO
+========================================== */
+
+.login-premium-apresentacao {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-self: stretch;
+    min-height: 600px;
+}
+
+.login-premium-marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.login-premium-marca-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, .12);
+    font-size: 28px;
+}
+
+.login-premium-chamada {
+    max-width: 630px;
+    padding: 55px 0;
+}
+
+.login-premium-etiqueta {
+    display: inline-block;
+    margin-bottom: 24px;
+    padding: 9px 13px;
+    border: 1px solid rgba(116, 177, 255, .35);
+    border-radius: 30px;
+    background: rgba(23, 99, 209, .22);
+    color: #a8d2ff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.login-premium-chamada h1 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(38px, 4.2vw, 68px);
+    line-height: 1.13;
+    letter-spacing: -2px;
+    font-weight: 800;
+}
+
+.login-premium-chamada h1 span {
+    display: block;
+    color: #69b4ff;
+}
+
+.login-premium-chamada p {
+    max-width: 520px;
+    margin: 25px 0 32px;
+    color: #d4e3f8;
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+.login-premium-recursos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.login-premium-recurso {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 13px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .09);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 11px;
+}
+
+.login-premium-recurso span {
+    color: #75c4ff;
+    font-size: 19px;
+}
+
+.login-premium-assinatura {
+    color: rgba(230, 240, 255, .6);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+}
+
+/* ==========================================
+   FORMULARIO
+========================================== */
+
+.login-premium-area-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+.login-premium-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 42px;
+    border: 1px solid rgba(255, 255, 255, .75);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, .28);
+    color: #17233b;
+}
+
+.login-premium-card-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.login-premium-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 53px;
+    height: 53px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #1763d1, #6d6cff);
+    color: white;
+    font-size: 31px;
+    box-shadow: 0 8px 18px rgba(23, 99, 209, .2);
+}
+
+.login-premium-acesso {
+    padding: 8px 10px;
+    border-radius: 20px;
+    background: #e9f8ef;
+    color: #16824f;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.login-premium-card h2 {
+    margin: 0 0 10px;
+    color: #152643;
+    font-size: 29px;
+    letter-spacing: -.8px;
+}
+
+.login-premium-descricao {
+    margin: 0 0 30px;
+    color: #7b8aa0;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.login-premium-form label {
+    display: block;
+    margin: 18px 0 9px;
+    color: #34445d;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.login-premium-input {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 15px;
+    border: 1px solid #dce5f0;
+    border-radius: 12px;
+    background: #f7f9fd;
+    transition: .2s ease;
+}
+
+.login-premium-input:focus-within {
+    border-color: #1763d1;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(23, 99, 209, .1);
+}
+
+.login-premium-input > span {
+    flex-shrink: 0;
+    color: #1763d1;
+    font-size: 21px;
+}
+
+.login-premium-input input {
+    width: 100%;
+    min-width: 0;
+    height: 52px;
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #17233b;
+    font-size: 13px;
+}
+
+.login-premium-input input:focus {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.login-premium-input input::placeholder {
+    color: #a0aabc;
+}
+
+.login-premium-entrar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 27px;
+    padding: 17px 20px;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #1763d1, #347eff);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 9px 22px rgba(23, 99, 209, .2);
+}
+
+.login-premium-entrar:hover {
+    background: linear-gradient(110deg, #104ca7, #1763d1);
+    transform: translateY(-2px);
+}
+
+.login-premium-entrar span {
+    font-size: 21px;
+}
+
+.login-premium-card-rodape {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 27px;
+    padding-top: 20px;
+    border-top: 1px solid #edf0f5;
+    color: #8490a4;
+    font-size: 11px;
+}
+
+.login-premium-card-rodape span {
+    color: #15975c;
+    font-size: 10px;
+}
+
+.login-premium-copyright {
+    margin: 22px 0 0;
+    color: rgba(255, 255, 255, .78);
+    font-size: 11px;
+    text-align: center;
+}
+
+/* ==========================================
+   RESPONSIVIDADE
+========================================== */
+
+@media (max-width: 1000px) {
+
+    .login-premium-layout {
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 1fr);
+        gap: 25px;
+        padding: 35px;
+    }
+
+    .login-premium-card {
+        padding: 30px;
+    }
+
+    .login-premium-chamada h1 {
+        font-size: 40px;
+    }
+
+}
+
+@media (max-width: 760px) {
+
+    .login-premium-layout {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 30px;
+        padding: 30px 18px;
+    }
+
+    .login-premium-apresentacao {
+        align-self: center;
+        min-height: 0;
+        width: 100%;
+        max-width: 450px;
+    }
+
+    .login-premium-marca {
+        margin-bottom: 20px;
+        font-size: 11px;
+    }
+
+    .login-premium-chamada {
+        padding: 0;
+    }
+
+    .login-premium-chamada h1 {
+        font-size: 34px;
+        letter-spacing: -1px;
+    }
+
+    .login-premium-chamada p {
+        margin: 15px 0 0;
+        font-size: 12px;
+    }
+
+    .login-premium-etiqueta,
+    .login-premium-recursos,
+    .login-premium-assinatura {
+        display: none;
+    }
+
+    .login-premium-area-form {
+        width: 100%;
+    }
+
+    .login-premium-card {
+        padding: 27px 23px;
+        border-radius: 19px;
+    }
+
+    .login-premium-card h2 {
+        font-size: 24px;
+    }
+
+    .login-premium-copyright {
+        font-size: 10px;
+    }
+
+}
+
