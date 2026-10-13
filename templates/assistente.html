@@ -5,9 +5,9 @@
 <div class="ia2-pagina">
     <div class="ia2-cabecalho">
         <div>
-            <span class="ia2-etiqueta">INTELIGÊNCIA ARTIFICIAL</span>
-            <h1>✦ Estoque IA 2.0</h1>
-            <p>Seu assistente inteligente de estoque e telecomunicações.</p>
+            <span class="ia2-etiqueta">ASSISTENTE VIRTUAL INTELIGENTE</span>
+            <h1>✦ KIRA IA</h1>
+            <p>Sua assistente virtual de estoque e telecomunicações.</p>
         </div>
 
         <div class="ia2-conexao" id="ia2-conexao">
@@ -23,7 +23,7 @@
                 <div class="ia2-marca">
                     <span class="ia2-marca-icone">✦</span>
                     <div>
-                        <strong>Estoque IA</strong>
+                        <strong>KIRA IA</strong>
                         <small>Workspace inteligente</small>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                 <span>🔒</span>
                 <div>
                     <strong>Consulta segura</strong>
-                    <small>A IA não altera seu estoque.</small>
+                    <small>A Kira não altera seu estoque.</small>
                 </div>
             </div>
         </aside>
@@ -66,7 +66,7 @@
                     <span class="ia2-avatar">✦</span>
 
                     <div>
-                        <strong>Assistente Inteligente</strong>
+                        <strong>KIRA IA</strong>
                         <small>Gestão de estoque • Telecom</small>
                     </div>
                 </div>
@@ -112,8 +112,8 @@
                         id="ia2-pergunta"
                         rows="1"
                         maxlength="2000"
-                        placeholder="Pergunte qualquer coisa ao Estoque IA..."
-                        aria-label="Sua mensagem"
+                        placeholder="Pergunte qualquer coisa à Kira..."
+                        aria-label="Sua mensagem para Kira"
                         required
                     ></textarea>
 
@@ -132,7 +132,8 @@
                 </div>
 
                 <p class="ia2-aviso">
-                    A IA pode cometer erros. Confirme informações importantes.
+                    Kira funciona no modo gratuito com respostas programadas.
+                    Confirme informações importantes.
                 </p>
             </div>
         </section>
@@ -143,6 +144,7 @@
 (function () {
     "use strict";
 
+    // Mantida para preservar as conversas anteriores.
     const CHAVE = "estoque_ia2_conversas_v1";
     const MAX_CONVERSAS = 20;
     const MAX_MENSAGENS = 60;
@@ -298,7 +300,7 @@
 
         const nome = document.createElement("strong");
         nome.className = "ia2-msg-nome";
-        nome.textContent = papel === "user" ? "Você" : "Estoque IA";
+        nome.textContent = papel === "user" ? "Você" : "KIRA IA";
 
         const balao = document.createElement("div");
         balao.className = "ia2-balao";
@@ -343,11 +345,11 @@
         simbolo.textContent = "✦";
 
         const titulo = document.createElement("h2");
-        titulo.textContent = "Como posso ajudar hoje?";
+        titulo.textContent = "Olá! Eu sou a Kira. 💜";
 
         const descricao = document.createElement("p");
         descricao.textContent =
-            "Sou a Estoque IA, sua assistente de gestão e " +
+            "Sou sua assistente virtual de gestão de estoque e " +
             "telecomunicações. Consulte produtos, quantidades, " +
             "MACs, seriais ou tire dúvidas técnicas.";
 
@@ -357,16 +359,16 @@
         const opcoes = [
             ["📦", "Analisar estoque",
                 "Veja totais, saldos e equipamentos em uso.",
-                "Faça uma análise geral do meu estoque."],
+                "Qual é o total do estoque?"],
             ["🔎", "Buscar equipamento",
                 "Consulte produtos por MAC, serial ou modelo.",
-                "Como posso consultar um equipamento pelo MAC?"],
+                "Buscar equipamento ABC123"],
             ["📋", "Ver movimentações",
                 "Confira as movimentações mais recentes.",
                 "Quais foram as últimas movimentações?"],
             ["🌐", "Suporte telecom",
                 "Tire dúvidas sobre redes e equipamentos.",
-                "Explique a diferença entre roteador e ONU."]
+                "O que é um roteador?"]
         ];
 
         opcoes.forEach(([icone, nome, desc, pergunta]) => {
@@ -467,7 +469,7 @@
 
         const aguardando = criarMensagem(
             "assistant",
-            "Analisando sua pergunta e consultando o estoque...",
+            "Kira está analisando sua pergunta e consultando o estoque...",
             true
         );
 
@@ -499,12 +501,12 @@
 
             if (!resposta.ok) {
                 throw new Error(
-                    dados.erro || "Não foi possível consultar a IA."
+                    dados.erro || "Não foi possível consultar a Kira."
                 );
             }
 
             const respostaTexto = String(
-                dados.resposta || "Não consegui responder agora."
+                dados.resposta || "Kira não conseguiu responder agora."
             );
 
             aguardando.linha.remove();
@@ -558,10 +560,10 @@
 
             if (!dados.ia_configurada) {
                 caixa.className = "ia2-conexao aviso";
-                texto.textContent = "IA não configurada";
+                texto.textContent = "Kira não configurada";
             } else {
                 caixa.className = "ia2-conexao online";
-                texto.textContent = "Servidor conectado";
+                texto.textContent = "Kira conectada";
             }
 
         } catch (_) {
