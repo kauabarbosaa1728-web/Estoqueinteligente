@@ -107,6 +107,7 @@
         </div>
 
         <div class="dash-calendario-grid" id="dash-dias"></div>
+
         <p class="dash-calendario-info" id="dash-cal-info">
           Carregando movimentações...
         </p>
@@ -255,7 +256,9 @@
 
         <div class="cadastro-campo">
           <label for="tipo">Nome do equipamento ou material *</label>
-          <input type="text" id="tipo" name="tipo"
+          <input type="text"
+                 id="tipo"
+                 name="tipo"
                  maxlength="100"
                  placeholder="Ex.: Roteador, ONU, cabo de rede..."
                  required>
@@ -264,21 +267,28 @@
 
         <div class="cadastro-campo">
           <label for="marca">Marca (opcional)</label>
-          <input type="text" id="marca" name="marca"
+          <input type="text"
+                 id="marca"
+                 name="marca"
                  maxlength="100"
                  placeholder="Ex.: Huawei, Intelbras, TP-Link">
         </div>
 
         <div class="cadastro-campo">
           <label for="modelo">Modelo (opcional)</label>
-          <input type="text" id="modelo" name="modelo"
+          <input type="text"
+                 id="modelo"
+                 name="modelo"
                  maxlength="100"
                  placeholder="Ex.: HG8245H">
         </div>
 
         <div class="cadastro-campo">
           <label for="chegada">Data de chegada *</label>
-          <input type="date" id="chegada" name="chegada" required>
+          <input type="date"
+                 id="chegada"
+                 name="chegada"
+                 required>
         </div>
 
       </div>
@@ -330,15 +340,21 @@
 
           <div class="cadastro-campo">
             <label for="codigo">Código interno (opcional)</label>
-            <input type="text" id="codigo" name="codigo"
+            <input type="text"
+                   id="codigo"
+                   name="codigo"
                    maxlength="120"
                    placeholder="Ex.: MAT-001">
           </div>
 
           <div class="cadastro-campo">
             <label for="quantidade-material">Quantidade *</label>
-            <input type="number" id="quantidade-material"
-                   name="quantidade" min="1" max="1000000" value="1">
+            <input type="number"
+                   id="quantidade-material"
+                   name="quantidade"
+                   min="1"
+                   max="1000000"
+                   value="1">
           </div>
 
           <div class="cadastro-campo">
@@ -407,7 +423,6 @@
   </form>
 
 </section>
-
 
 <!-- =========================================
      ESTOQUE GERAL PREMIUM
@@ -497,13 +512,14 @@
 
   <p class="ep-metric-note">
     Os indicadores contam registros, sem misturar unidades, metros e quilos.
+    Os filtros de situação consideram os registros da página exibida.
   </p>
 
   <div class="ep-toolbar">
 
     <div class="ep-toolbar-title">
       <h3>📋 Produtos e equipamentos</h3>
-      <p>Selecione um filtro ou digite para localizar rapidamente.</p>
+      <p>Pesquise em todo o estoque e navegue entre as páginas.</p>
     </div>
 
     <form method="GET" id="form-busca" class="ep-search">
@@ -525,22 +541,22 @@
   <div class="ep-filterbar">
 
     <button type="button" class="ep-filter active"
-            data-ep-filter="todos">
+            data-ep-filter="todos" aria-pressed="true">
       Todos <span id="ep-n-todos">0</span>
     </button>
 
     <button type="button" class="ep-filter"
-            data-ep-filter="disponivel">
+            data-ep-filter="disponivel" aria-pressed="false">
       🟢 Disponíveis <span id="ep-n-disponivel">0</span>
     </button>
 
     <button type="button" class="ep-filter"
-            data-ep-filter="parcial">
+            data-ep-filter="parcial" aria-pressed="false">
       🟠 Saldo parcial <span id="ep-n-parcial">0</span>
     </button>
 
     <button type="button" class="ep-filter"
-            data-ep-filter="sem-saldo">
+            data-ep-filter="sem-saldo" aria-pressed="false">
       🔴 Sem saldo <span id="ep-n-sem-saldo">0</span>
     </button>
 
@@ -676,6 +692,9 @@
 
   </div>
 
+  <!-- O dashboard.js cria e atualiza os controles
+       de paginação após a tabela. -->
+
   <div class="ep-empty" id="ep-empty" hidden>
     <div>🔎</div>
     <strong>Nenhum item corresponde aos filtros</strong>
@@ -735,7 +754,6 @@
   </div>
 
 </div>
-
 
 <!-- =========================================
      ESTILOS DO ESTOQUE PREMIUM
@@ -1182,6 +1200,43 @@
   color: white;
 }
 
+/* PAGINACAO */
+
+#ep-paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 22px 18px 8px;
+}
+
+#ep-paginacao button {
+  padding: 10px 15px;
+  border: 1px solid #dce6f4;
+  border-radius: 10px;
+  background: #eef4ff;
+  color: #1763d1;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#ep-paginacao button:hover:not(:disabled) {
+  background: #dceaff;
+}
+
+#ep-paginacao button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+#ep-paginacao-info,
+#ep-paginacao-numero {
+  font-size: 12px;
+  color: #53657f;
+}
+
 @media (max-width: 1100px) {
   .ep-kpis {
     grid-template-columns: repeat(2,1fr);
@@ -1268,10 +1323,13 @@
   .ep-table-header {
     flex-direction: column;
   }
+
+  #ep-paginacao {
+    gap: 8px;
+  }
 }
 
 </style>
-
 
 <!-- =========================================
      JAVASCRIPT CADASTRO PREMIUM
@@ -1423,7 +1481,7 @@
 
     descricao.textContent = configuracoes[novoModo].descricao;
     ajuda.querySelector("p").textContent =
-      "💡 " + configuracoes[novoModo].ajuda;
+      configuracoes[novoModo].ajuda;
 
     previa();
   }
@@ -1480,7 +1538,6 @@
 })();
 </script>
 
-
 <!-- =========================================
      JAVASCRIPT ESTOQUE GERAL PREMIUM
 ========================================= -->
@@ -1492,9 +1549,10 @@
   const secao = document.getElementById("estoque");
   const corpo = document.getElementById("estoque-corpo");
   const busca = document.getElementById("busca");
+  const formularioBusca = document.getElementById("form-busca");
   const modal = document.getElementById("ep-modal");
 
-  if (!secao || !corpo) return;
+  if (!secao || !corpo || !modal) return;
 
   let filtro = "todos";
   let pendente = null;
@@ -1521,11 +1579,17 @@
 
   function dados(tr) {
     const saldo = Number(
-      (tr.cells[5]?.textContent || "0").trim().split(" ")[0].replace(",", ".")
+      (tr.cells[5]?.textContent || "0")
+        .trim()
+        .split(" ")[0]
+        .replace(",", ".")
     ) || 0;
 
     const uso = Number(
-      (tr.cells[6]?.textContent || "0").trim().split(" ")[0].replace(",", ".")
+      (tr.cells[6]?.textContent || "0")
+        .trim()
+        .split(" ")[0]
+        .replace(",", ".")
     ) || 0;
 
     return {
@@ -1566,6 +1630,7 @@
     if (!celulas[1].querySelector(".ep-copy")) {
       const codigo = celulas[1].querySelector("code");
       const botao = document.createElement("button");
+
       botao.type = "button";
       botao.className = "ep-copy";
       botao.title = "Copiar identificador";
@@ -1605,17 +1670,11 @@
 
   function atualizar() {
     const todas = linhas();
-    const termo = normalizar(busca?.value.trim());
 
     let visiveis = 0;
     let disponiveis = 0;
     let parciais = 0;
     let semSaldo = 0;
-
-    let filtradosBusca = 0;
-    let disponiveisBusca = 0;
-    let parciaisBusca = 0;
-    let semSaldoBusca = 0;
 
     todas.forEach(tr => {
       decorar(tr);
@@ -1626,72 +1685,101 @@
       if (d.parcial) parciais++;
       if (d.semSaldo) semSaldo++;
 
-      const correspondeBusca =
-        !termo || normalizar(tr.textContent).includes(termo);
-
-      if (correspondeBusca) {
-        filtradosBusca++;
-        if (d.disponivel) disponiveisBusca++;
-        if (d.parcial) parciaisBusca++;
-        if (d.semSaldo) semSaldoBusca++;
-      }
-
       const correspondeFiltro =
         filtro === "todos" ||
         (filtro === "disponivel" && d.disponivel) ||
         (filtro === "parcial" && d.parcial) ||
         (filtro === "sem-saldo" && d.semSaldo);
 
-      tr.hidden = !(correspondeBusca && correspondeFiltro);
+      tr.hidden = !correspondeFiltro;
 
       if (!tr.hidden) visiveis++;
     });
 
-    texto("ep-total", todas.length);
+    const total = todas.length;
+
+    texto("ep-total", total);
     texto("ep-disponiveis", disponiveis);
     texto("ep-parciais", parciais);
     texto("ep-sem-saldo", semSaldo);
 
-    texto("ep-n-todos", filtradosBusca);
-    texto("ep-n-disponivel", disponiveisBusca);
-    texto("ep-n-parcial", parciaisBusca);
-    texto("ep-n-sem-saldo", semSaldoBusca);
+    texto("ep-n-todos", total);
+    texto("ep-n-disponivel", disponiveis);
+    texto("ep-n-parcial", parciais);
+    texto("ep-n-sem-saldo", semSaldo);
 
-    texto("ep-resultados", visiveis + " registro(s) exibido(s)");
+    const paginacao = porId("ep-paginacao-numero");
 
-    porId("ep-empty").hidden = visiveis !== 0;
+    const detalhePagina = paginacao
+      ? " • " + paginacao.textContent.trim()
+      : "";
+
+    texto(
+      "ep-resultados",
+      visiveis + " registro(s) exibido(s)" + detalhePagina
+    );
+
+    const vazio = porId("ep-empty");
+
+    if (vazio) {
+      vazio.hidden = visiveis !== 0;
+    }
+  }
+
+  function selecionarFiltro(botao) {
+    filtro = botao.dataset.epFilter;
+
+    secao.querySelectorAll("[data-ep-filter]").forEach(b => {
+      const ativo = b === botao;
+
+      b.classList.toggle("active", ativo);
+      b.setAttribute("aria-pressed", String(ativo));
+    });
+
+    atualizar();
   }
 
   secao.querySelectorAll("[data-ep-filter]").forEach(botao => {
     botao.addEventListener("click", () => {
-      filtro = botao.dataset.epFilter;
-
-      secao.querySelectorAll("[data-ep-filter]").forEach(b => {
-        const ativo = b === botao;
-        b.classList.toggle("active", ativo);
-        b.setAttribute("aria-pressed", String(ativo));
-      });
-
-      atualizar();
+      selecionarFiltro(botao);
     });
   });
 
-  porId("ep-limpar").addEventListener("click", () => {
-    busca.value = "";
-    secao.querySelector('[data-ep-filter="todos"]').click();
+  const limpar = porId("ep-limpar");
 
-    const url = new URL(location.href);
-    url.searchParams.delete("busca");
-    history.replaceState({}, "", url);
-  });
+  if (limpar) {
+    limpar.addEventListener("click", () => {
+      const botaoTodos = secao.querySelector(
+        '[data-ep-filter="todos"]'
+      );
 
-  busca.addEventListener("input", atualizar);
+      if (botaoTodos) {
+        selecionarFiltro(botaoTodos);
+      }
+
+      if (busca) {
+        busca.value = "";
+      }
+
+      // A pesquisa precisa ser refeita no servidor
+      // para recuperar os registros fora da página.
+      if (formularioBusca) {
+        formularioBusca.requestSubmit();
+      }
+    });
+  }
 
   secao.addEventListener("click", async e => {
-    const botao = e.target.closest(".ep-copy");
+    const alvo = e.target;
+
+    if (!(alvo instanceof Element)) return;
+
+    const botao = alvo.closest(".ep-copy");
+
     if (!botao) return;
 
-    const valor = botao.querySelector("code")?.textContent.trim() || "";
+    const valor =
+      botao.querySelector("code")?.textContent.trim() || "";
 
     try {
       await navigator.clipboard.writeText(valor);
@@ -1701,31 +1789,55 @@
     }
   });
 
-  const observador = new MutationObserver(() => {
-    observador.disconnect();
+  // Quando o dashboard.js troca os 50 registros,
+  // os indicadores e filtros são recalculados.
+  document.addEventListener("estoque:atualizado", () => {
     atualizar();
-    observador.observe(corpo, { childList: true });
   });
 
-  observador.observe(corpo, { childList: true });
+  const observador = new MutationObserver(() => {
+    observador.disconnect();
+
+    atualizar();
+
+    observador.observe(corpo, {
+      childList: true
+    });
+  });
+
+  observador.observe(corpo, {
+    childList: true
+  });
 
   function fechar() {
     modal.hidden = true;
     pendente = null;
   }
 
-  porId("ep-modal-cancel").addEventListener("click", fechar);
+  porId("ep-modal-cancel").addEventListener(
+    "click",
+    fechar
+  );
 
   modal.addEventListener("click", e => {
-    if (e.target === modal) fechar();
+    if (e.target === modal) {
+      fechar();
+    }
   });
 
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && !modal.hidden) fechar();
+    if (e.key === "Escape" && !modal.hidden) {
+      fechar();
+    }
   });
 
   secao.addEventListener("submit", e => {
-    const form = e.target.closest("form.movimentacao");
+    const alvo = e.target;
+
+    if (!(alvo instanceof Element)) return;
+
+    const form = alvo.closest("form.movimentacao");
+
     if (!form) return;
 
     if (envioLiberado === form) {
@@ -1740,21 +1852,33 @@
 
     if (!botao) return;
 
+    const campoQuantidade = form.querySelector(
+      '[name="quantidade"]'
+    );
+
     const quantidade = Number(
-      form.querySelector('[name="quantidade"]').value
+      campoQuantidade?.value
     );
 
     const tr = form.closest("tr");
+
+    if (!tr) return;
+
     const d = dados(tr);
 
     const maximo = botao.value === "retirar"
       ? d.saldo
       : d.uso;
 
-    if (!Number.isInteger(quantidade) ||
-        quantidade < 1 ||
-        quantidade > maximo) {
-      alert("Informe uma quantidade válida entre 1 e " + maximo);
+    if (
+      !Number.isInteger(quantidade) ||
+      quantidade < 1 ||
+      quantidade > maximo
+    ) {
+      alert(
+        "Informe uma quantidade válida entre 1 e " +
+        maximo
+      );
       return;
     }
 
@@ -1763,13 +1887,22 @@
       : "Devolver";
 
     const produto = tr.cells[0]
-      .querySelector("strong")?.textContent.trim() || "Produto";
+      .querySelector("strong")
+      ?.textContent.trim() || "Produto";
 
     const codigo = tr.cells[1]
-      .querySelector("code")?.textContent.trim() || "-";
+      .querySelector("code")
+      ?.textContent.trim() || "-";
 
-    texto("ep-modal-symbol", acao === "Retirar" ? "📤" : "📥");
-    texto("ep-modal-title", "Confirmar " + acao.toLowerCase());
+    texto(
+      "ep-modal-symbol",
+      acao === "Retirar" ? "📤" : "📥"
+    );
+
+    texto(
+      "ep-modal-title",
+      "Confirmar " + acao.toLowerCase()
+    );
 
     texto(
       "ep-modal-description",
@@ -1786,17 +1919,21 @@
     porId("ep-modal-cancel").focus();
   }, true);
 
-  porId("ep-modal-confirm").addEventListener("click", () => {
-    if (!pendente) return;
+  porId("ep-modal-confirm").addEventListener(
+    "click",
+    () => {
+      if (!pendente) return;
 
-    const { form, botao } = pendente;
-    pendente = null;
+      const { form, botao } = pendente;
 
-    modal.hidden = true;
-    envioLiberado = form;
+      pendente = null;
+      modal.hidden = true;
 
-    form.requestSubmit(botao);
-  });
+      envioLiberado = form;
+
+      form.requestSubmit(botao);
+    }
+  );
 
   atualizar();
 
@@ -1814,3 +1951,4 @@
 </script>
 
 {% endblock %}
+
