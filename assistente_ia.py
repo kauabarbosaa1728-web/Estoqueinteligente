@@ -18,7 +18,7 @@ LIMITE_BAIXO = 3
 def configuracao_ia():
     return {
         "configurada": True,
-        "modelo": "Estoque IA 3.0 - Gratuita"
+        "modelo": "KIRA IA 3.0 - Gratuita"
     }
 
 
@@ -758,7 +758,7 @@ def criar_resposta(
         ):
             return (
                 f"{resposta}\n\n"
-                "Sou a Estoque IA 3.0! "
+                "Sou a Kira, sua assistente virtual! 💜 "
                 "Posso ajudar com o estoque e telecomunicacoes. "
                 "O que vamos consultar hoje?"
             )
@@ -790,8 +790,8 @@ def criar_resposta(
         "o que sabe fazer"
     ):
         return (
-            "🤖 ESTOQUE IA 3.0\n\n"
-            "Sou o assistente gratuito do Estoque Inteligente.\n\n"
+            "🤖 KIRA IA 3.0\n\n"
+            "Sou a Kira, assistente virtual gratuita do Estoque Inteligente.\n\n"
             "Posso consultar:\n"
             "📦 Resumo do estoque\n"
             "🟢 Quantidades disponiveis\n"
@@ -963,3 +963,5 @@ def criar_resposta(
         "basicas de telecomunicacoes.\n\n"
         "Digite 'ajuda' para conhecer minhas funcoes."
     )
+
+   
