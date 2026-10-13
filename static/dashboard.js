@@ -1,47 +1,29 @@
 
 /* ==========================================
    ESTOQUE INTELIGENTE
-   DASHBOARD AO VIVO
+   DASHBOARD + ESTOQUE PREMIUM
 ========================================== */
 
 "use strict";
 
 (() => {
 
-    // ======================================
-    // CONFIGURACOES
-    // ======================================
-
     const INTERVALO_ATUALIZACAO = 5000;
-
     const FUSO = "America/Sao_Paulo";
 
     const MESES = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro"
+        "Janeiro", "Fevereiro", "Março",
+        "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro",
+        "Outubro", "Novembro", "Dezembro"
     ];
 
     const SEMANA = [
-        "Dom",
-        "Seg",
-        "Ter",
-        "Qua",
-        "Qui",
-        "Sex",
-        "Sáb"
+        "Dom", "Seg", "Ter", "Qua",
+        "Qui", "Sex", "Sáb"
     ];
 
-    const agora = new Date();
+    const dataInicial = new Date();
 
     const partesData = new Intl.DateTimeFormat(
         "en-US",
@@ -51,15 +33,11 @@
             month: "numeric",
             day: "numeric"
         }
-    ).formatToParts(agora);
+    ).formatToParts(dataInicial);
 
-    const obterParte = (nome) => {
-        return Number(
-            partesData.find(
-                (parte) => parte.type === nome
-            )?.value || 0
-        );
-    };
+    const obterParte = nome => Number(
+        partesData.find(parte => parte.type === nome)?.value || 0
+    );
 
     const HOJE_ANO = obterParte("year");
     const HOJE_MES = obterParte("month");
@@ -72,6 +50,8 @@
     let carregandoCalendario = false;
     let calendarioVersao = 0;
 
+    let ultimaBuscaSolicitada = null;
+    let estoquePendente = null;
 
     // ======================================
     // FUNCOES AUXILIARES
@@ -90,9 +70,9 @@
     }
 
     function formatarNumero(numero) {
-        return new Intl.NumberFormat(
-            "pt-BR"
-        ).format(Number(numero) || 0);
+        return new Intl.NumberFormat("pt-BR").format(
+            Number(numero) || 0
+        );
     }
 
     function formatarHora() {
@@ -118,6 +98,13 @@
                 year: "numeric"
             }
         ).format(new Date());
+    }
+
+    function normalizar(valor) {
+        return String(valor || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase();
     }
 
     async function buscarJSON(url) {
@@ -152,26 +139,22 @@
         return resposta.json();
     }
 
-    function criarElemento(tag, classe, texto) {
+    function criarElemento(tag, classe = "", texto = null) {
         const novo = document.createElement(tag);
 
         if (classe) {
             novo.className = classe;
         }
 
-        if (
-            texto !== undefined &&
-            texto !== null
-        ) {
+        if (texto !== null && texto !== undefined) {
             novo.textContent = String(texto);
         }
 
         return novo;
     }
 
-
     // ======================================
-    // STATUS DA CONEXAO
+    // CONEXAO
     // ======================================
 
     function definirConexao(conectado) {
@@ -181,18 +164,18 @@
             return;
         }
 
-        if (conectado) {
-            status.textContent = "● Ao vivo";
-            status.classList.remove("offline");
-        } else {
-            status.textContent = "● Sem conexão";
-            status.classList.add("offline");
-        }
+        status.textContent = conectado
+            ? "● Ao vivo"
+            : "● Sem conexão";
+
+        status.classList.toggle(
+            "offline",
+            !conectado
+        );
     }
 
-
     // ======================================
-    // ATUALIZAR INDICADORES
+    // INDICADORES DO DASHBOARD
     // ======================================
 
     function atualizarIndicadores(dados) {
@@ -201,25 +184,10 @@
         const uso = Number(dados.uso) || 0;
         const produtos = Number(dados.produtos) || 0;
 
-        definirTexto(
-            "dash-total",
-            formatarNumero(total)
-        );
-
-        definirTexto(
-            "dash-saldo",
-            formatarNumero(saldo)
-        );
-
-        definirTexto(
-            "dash-uso",
-            formatarNumero(uso)
-        );
-
-        definirTexto(
-            "dash-produtos",
-            formatarNumero(produtos)
-        );
+        definirTexto("dash-total", formatarNumero(total));
+        definirTexto("dash-saldo", formatarNumero(saldo));
+        definirTexto("dash-uso", formatarNumero(uso));
+        definirTexto("dash-produtos", formatarNumero(produtos));
 
         definirTexto(
             "dash-legenda-saldo",
@@ -231,62 +199,55 @@
             formatarNumero(uso)
         );
 
-        let percentual = 0;
-
-        if (total > 0) {
-            percentual = (saldo / total) * 100;
-        }
-
-        percentual = Math.max(
-            0,
-            Math.min(100, percentual)
-        );
+        const percentual = total > 0
+            ? Math.max(
+                0,
+                Math.min(100, saldo / total * 100)
+            )
+            : 0;
 
         definirTexto(
             "dash-percentual",
             percentual.toLocaleString(
                 "pt-BR",
-                {
-                    maximumFractionDigits: 1
-                }
+                { maximumFractionDigits: 1 }
             ) + "%"
         );
 
         const grafico = elemento("dash-rosca");
 
         if (grafico) {
-            if (total === 0) {
-                grafico.style.background = "#e5eaf1";
-            } else {
-                grafico.style.background =
-                    `conic-gradient(
-                        #15975c 0% ${percentual}%,
-                        #df4545 ${percentual}% 100%
-                    )`;
-            }
+            grafico.style.background = total === 0
+                ? "#e5eaf1"
+                : `conic-gradient(
+                    #15975c 0% ${percentual}%,
+                    #df4545 ${percentual}% 100%
+                )`;
         }
     }
-
 
     // ======================================
     // ULTIMAS MOVIMENTACOES
     // ======================================
 
     function iconeMovimentacao(acao) {
-        const texto = String(
-            acao || ""
-        ).toLowerCase();
+        const valor = normalizar(acao);
 
-        if (texto.includes("retirada")) {
+        if (
+            valor.includes("retirada") ||
+            valor.includes("retirado")
+        ) {
             return "📤";
         }
 
-        if (texto.includes("devolu")) {
+        if (valor.includes("devolu")) {
             return "📥";
         }
 
-        if (texto.includes("cadastro") ||
-            texto.includes("cadastrado")) {
+        if (
+            valor.includes("cadastro") ||
+            valor.includes("cadastrado")
+        ) {
             return "📦";
         }
 
@@ -294,9 +255,7 @@
     }
 
     function atualizarMovimentacoes(movimentacoes) {
-        const lista = elemento(
-            "dash-movimentacoes"
-        );
+        const lista = elemento("dash-movimentacoes");
 
         if (!lista) {
             return;
@@ -319,8 +278,7 @@
             return;
         }
 
-        movimentacoes.forEach((movimento) => {
-
+        movimentacoes.forEach(movimento => {
             const linha = criarElemento(
                 "div",
                 "dash-movimento"
@@ -359,34 +317,23 @@
                 movimento.data || "-"
             );
 
-            conteudo.appendChild(titulo);
-            conteudo.appendChild(descricao);
+            conteudo.append(titulo, descricao);
 
-            linha.appendChild(icone);
-            linha.appendChild(conteudo);
-            linha.appendChild(data);
+            linha.append(icone, conteudo, data);
 
             lista.appendChild(linha);
         });
     }
 
-
     // ======================================
-    // ATUALIZAR TABELA DE ESTOQUE
+    // ESTOQUE PREMIUM
     // ======================================
 
-    function criarCelula(linha, texto, classe) {
+    function criarCelula(linha, classe = "") {
         const celula = document.createElement("td");
 
         if (classe) {
             celula.className = classe;
-        }
-
-        if (
-            texto !== undefined &&
-            texto !== null
-        ) {
-            celula.textContent = String(texto);
         }
 
         linha.appendChild(celula);
@@ -399,31 +346,35 @@
         texto,
         classe
     ) {
-        const botao = document.createElement(
-            "button"
+        const botao = criarElemento(
+            "button",
+            classe,
+            texto
         );
 
         botao.type = "submit";
         botao.name = "acao";
         botao.value = acao;
-        botao.className = classe;
-        botao.textContent = texto;
 
         return botao;
     }
 
     function criarLinhaEstoque(item) {
-        const saldo = Number(
-            item.quantidade
-        ) || 0;
+        const saldo = Math.max(
+            0,
+            Number(item.quantidade) || 0
+        );
 
-        const emUso = Number(
-            item.em_uso
-        ) || 0;
+        const emUso = Math.max(
+            0,
+            Number(item.em_uso) || 0
+        );
 
         const unidade = item.unidade || "un";
 
         const linha = document.createElement("tr");
+
+        linha.dataset.estoqueId = String(item.id);
 
         linha.className = saldo === 0
             ? "linha-uso"
@@ -431,12 +382,24 @@
 
         // PRODUTO
 
-        const produto = criarCelula(
-            linha,
-            ""
+        const produto = criarCelula(linha);
+
+        const caixaProduto = criarElemento(
+            "div",
+            "ep-product"
         );
 
-        produto.appendChild(
+        caixaProduto.appendChild(
+            criarElemento(
+                "span",
+                "ep-product-icon",
+                "📦"
+            )
+        );
+
+        const informacoes = criarElemento("div");
+
+        informacoes.appendChild(
             criarElemento(
                 "strong",
                 "",
@@ -449,7 +412,7 @@
             item.modelo
         ].filter(Boolean).join(" ");
 
-        produto.appendChild(
+        informacoes.appendChild(
             criarElemento(
                 "small",
                 "",
@@ -457,43 +420,58 @@
             )
         );
 
-        // IDENTIFICADOR
+        caixaProduto.appendChild(informacoes);
+        produto.appendChild(caixaProduto);
 
-        const identificador = criarCelula(
-            linha,
-            ""
+        // IDENTIFICADOR COPIAVEL
+
+        const identificador = criarCelula(linha);
+
+        const botaoCopiar = criarElemento(
+            "button",
+            "ep-copy"
         );
 
-        identificador.appendChild(
+        botaoCopiar.type = "button";
+        botaoCopiar.title = "Copiar identificador";
+
+        botaoCopiar.appendChild(
             criarElemento(
                 "code",
                 "",
-                item.identificador || "-"
+                item.identificador ||
+                item.mac ||
+                item.serial ||
+                item.codigo ||
+                ("ID-" + item.id)
             )
         );
 
-        // DATAS E RESPONSAVEL
-
-        criarCelula(
-            linha,
-            item.chegada || "-"
+        botaoCopiar.appendChild(
+            criarElemento(
+                "span",
+                "",
+                "⧉"
+            )
         );
 
-        criarCelula(
-            linha,
-            item.cadastro || "-"
-        );
+        identificador.appendChild(botaoCopiar);
 
-        criarCelula(
-            linha,
-            item.cadastrado_por || "-"
-        );
+        // DATAS
 
-        // SALDO
+        criarCelula(linha).textContent =
+            item.chegada || "-";
+
+        criarCelula(linha).textContent =
+            item.cadastro || "-";
+
+        criarCelula(linha).textContent =
+            item.cadastrado_por || "-";
+
+        // DISPONIVEL
 
         const celulaSaldo = criarCelula(
             linha,
-            "",
             "verde-texto"
         );
 
@@ -509,7 +487,6 @@
 
         const celulaUso = criarCelula(
             linha,
-            "",
             "vermelho-texto"
         );
 
@@ -523,42 +500,38 @@
 
         // SITUACAO
 
-        const celulaSituacao = criarCelula(
-            linha,
-            ""
-        );
+        const celulaSituacao = criarCelula(linha);
 
-        let situacaoTexto = "No saldo";
-        let situacaoClasse = "status saldo";
+        let situacao = "Disponível";
+        let classeSituacao = "status saldo";
 
         if (saldo === 0) {
-            situacaoTexto = "Em uso";
-            situacaoClasse = "status uso";
+            situacao = "Sem saldo";
+            classeSituacao = "status uso";
         } else if (emUso > 0) {
-            situacaoTexto = "Saldo parcial";
+            situacao = "Saldo parcial";
         }
 
         celulaSituacao.appendChild(
             criarElemento(
                 "span",
-                situacaoClasse,
-                "● " + situacaoTexto
+                classeSituacao,
+                "● " + situacao
             )
         );
 
         // MOVIMENTACAO
 
-        const celulaMovimento = criarCelula(
-            linha,
-            ""
-        );
+        const celulaMovimento = criarCelula(linha);
 
         const formulario = document.createElement(
             "form"
         );
 
         formulario.method = "POST";
-        formulario.action = `/status/${encodeURIComponent(item.id)}`;
+        formulario.action =
+            `/status/${encodeURIComponent(item.id)}`;
+
         formulario.className = "movimentacao";
 
         const quantidade = document.createElement(
@@ -568,8 +541,13 @@
         quantidade.type = "number";
         quantidade.name = "quantidade";
         quantidade.min = "1";
+        quantidade.step = "1";
         quantidade.value = "1";
         quantidade.required = true;
+        quantidade.setAttribute(
+            "aria-label",
+            "Quantidade a movimentar"
+        );
 
         formulario.appendChild(quantidade);
 
@@ -577,7 +555,7 @@
             formulario.appendChild(
                 criarBotaoMovimentacao(
                     "retirar",
-                    "Retirar",
+                    "↗ Retirar",
                     "btn-uso"
                 )
             );
@@ -587,18 +565,52 @@
             formulario.appendChild(
                 criarBotaoMovimentacao(
                     "devolver",
-                    "Devolver",
+                    "↙ Devolver",
                     "btn-saldo"
                 )
             );
         }
 
-        celulaMovimento.appendChild(
-            formulario
-        );
+        celulaMovimento.appendChild(formulario);
 
         return linha;
     }
+
+    // ======================================
+    // PROTEGER EDICAO E CONFIRMACAO
+    // ======================================
+
+    function estoqueEstaSendoEditado() {
+        const corpo = elemento("estoque-corpo");
+        const modal = elemento("ep-modal");
+
+        if (!corpo) {
+            return false;
+        }
+
+        // Se a janela de confirmação estiver
+        // aberta, não substituímos a tabela.
+
+        if (modal && !modal.hidden) {
+            return true;
+        }
+
+        // Não substituir enquanto o funcionário
+        // estiver preenchendo a quantidade.
+
+        if (
+            document.activeElement &&
+            corpo.contains(document.activeElement)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // ======================================
+    // ATUALIZAR TABELA
+    // ======================================
 
     function atualizarTabela(itens) {
         const corpo = elemento("estoque-corpo");
@@ -607,52 +619,66 @@
             return;
         }
 
-        // Nao substitui os campos enquanto
-        // o usuario estiver digitando uma quantidade.
-
-        if (
-            document.activeElement &&
-            corpo.contains(document.activeElement)
-        ) {
+        if (!Array.isArray(itens)) {
             return;
         }
 
+        if (estoqueEstaSendoEditado()) {
+            estoquePendente = itens;
+            return;
+        }
+
+        estoquePendente = null;
+
         const fragmento = document.createDocumentFragment();
 
-        if (
-            !Array.isArray(itens) ||
-            itens.length === 0
-        ) {
-            const linha = document.createElement(
-                "tr"
-            );
+        if (itens.length === 0) {
+            const linha = document.createElement("tr");
 
             const celula = criarCelula(
                 linha,
-                "Nenhum produto encontrado.",
                 "vazio"
             );
+
+            celula.textContent =
+                "Nenhum produto encontrado.";
 
             celula.colSpan = 9;
 
             fragmento.appendChild(linha);
-
         } else {
-
-            itens.forEach((item) => {
+            itens.forEach(item => {
                 fragmento.appendChild(
                     criarLinhaEstoque(item)
                 );
             });
-
         }
 
         corpo.replaceChildren(fragmento);
+
+        // O JavaScript do index.html detecta
+        // a alteração e reaplica os filtros.
+
+        document.dispatchEvent(
+            new CustomEvent("estoque:atualizado", {
+                detail: {
+                    quantidade: itens.length
+                }
+            })
+        );
     }
 
+    function aplicarEstoquePendente() {
+        if (
+            estoquePendente &&
+            !estoqueEstaSendoEditado()
+        ) {
+            atualizarTabela(estoquePendente);
+        }
+    }
 
     // ======================================
-    // CALENDARIO INTELIGENTE
+    // CALENDARIO
     // ======================================
 
     function chaveData(ano, mes, dia) {
@@ -677,7 +703,7 @@
 
         grade.replaceChildren();
 
-        SEMANA.forEach((dia) => {
+        SEMANA.forEach(dia => {
             grade.appendChild(
                 criarElemento(
                     "div",
@@ -765,9 +791,9 @@
                     )
                 );
 
-                caixa.title = (
-                    `${quantidade} movimentação(ões) em ${dia}/${calendarioMes}/${calendarioAno}`
-                );
+                caixa.title =
+                    `${quantidade} movimentação(ões) em ` +
+                    `${dia}/${calendarioMes}/${calendarioAno}`;
             }
 
             grade.appendChild(caixa);
@@ -782,7 +808,6 @@
         carregandoCalendario = true;
 
         const versao = ++calendarioVersao;
-
         const anoSolicitado = calendarioAno;
         const mesSolicitado = calendarioMes;
 
@@ -810,11 +835,11 @@
 
             definirTexto(
                 "dash-cal-info",
-                `${formatarNumero(dados.total_movimentacoes)} movimentação(ões) neste mês.`
+                `${formatarNumero(dados.total_movimentacoes)} ` +
+                "movimentação(ões) neste mês."
             );
 
         } catch (erro) {
-
             console.error(
                 "Erro ao carregar calendário:",
                 erro
@@ -842,7 +867,6 @@
         calendarioAno = data.getUTCFullYear();
         calendarioMes = data.getUTCMonth() + 1;
 
-        // Invalida uma consulta anterior.
         calendarioVersao++;
 
         carregarCalendario();
@@ -853,37 +877,30 @@
         const proximo = elemento("dash-proximo");
         const hoje = elemento("dash-hoje");
 
-        if (anterior) {
-            anterior.addEventListener(
-                "click",
-                () => mudarMes(-1)
-            );
-        }
+        anterior?.addEventListener(
+            "click",
+            () => mudarMes(-1)
+        );
 
-        if (proximo) {
-            proximo.addEventListener(
-                "click",
-                () => mudarMes(1)
-            );
-        }
+        proximo?.addEventListener(
+            "click",
+            () => mudarMes(1)
+        );
 
-        if (hoje) {
-            hoje.addEventListener(
-                "click",
-                () => {
-                    calendarioAno = HOJE_ANO;
-                    calendarioMes = HOJE_MES;
+        hoje?.addEventListener(
+            "click",
+            () => {
+                calendarioAno = HOJE_ANO;
+                calendarioMes = HOJE_MES;
 
-                    calendarioVersao++;
-                    carregarCalendario();
-                }
-            );
-        }
+                calendarioVersao++;
+                carregarCalendario();
+            }
+        );
     }
 
-
     // ======================================
-    // BUSCA AUTOMATICA DO ESTOQUE
+    // BUSCA
     // ======================================
 
     function configurarBusca() {
@@ -895,7 +912,7 @@
 
         formulario.addEventListener(
             "submit",
-            (evento) => {
+            evento => {
                 evento.preventDefault();
 
                 const campo = elemento("busca");
@@ -930,17 +947,12 @@
         );
     }
 
-
     // ======================================
     // ATUALIZACAO GERAL
     // ======================================
 
     async function atualizarDashboard() {
-        if (atualizando) {
-            return;
-        }
-
-        if (document.hidden) {
+        if (atualizando || document.hidden) {
             return;
         }
 
@@ -963,6 +975,8 @@
                 ? "/api/estoque?" + parametros.toString()
                 : "/api/estoque";
 
+            ultimaBuscaSolicitada = busca;
+
             const [dashboard, estoque] = await Promise.all([
                 buscarJSON("/api/dashboard"),
                 buscarJSON(urlEstoque)
@@ -974,9 +988,21 @@
                 dashboard.movimentacoes || []
             );
 
-            atualizarTabela(
-                estoque.itens || []
-            );
+            // Evita aplicar uma busca antiga
+            // caso o usuário tenha digitado
+            // outro termo durante a consulta.
+
+            const buscaAtual = campoBusca
+                ? campoBusca.value.trim()
+                : "";
+
+            if (
+                buscaAtual === ultimaBuscaSolicitada
+            ) {
+                atualizarTabela(
+                    estoque.itens || []
+                );
+            }
 
             definirTexto(
                 "dash-data",
@@ -990,11 +1016,9 @@
 
             definirConexao(true);
 
-            // Recarrega os dados do calendario.
             await carregarCalendario();
 
         } catch (erro) {
-
             console.error(
                 "Erro ao atualizar Dashboard:",
                 erro
@@ -1012,7 +1036,6 @@
         }
     }
 
-
     // ======================================
     // INICIALIZACAO
     // ======================================
@@ -1023,7 +1046,6 @@
         }
 
         configurarCalendario();
-
         configurarBusca();
 
         definirTexto(
@@ -1034,7 +1056,10 @@
         atualizarDashboard();
 
         window.setInterval(
-            atualizarDashboard,
+            () => {
+                aplicarEstoquePendente();
+                atualizarDashboard();
+            },
             INTERVALO_ATUALIZACAO
         );
 
@@ -1042,8 +1067,31 @@
             "visibilitychange",
             () => {
                 if (!document.hidden) {
+                    aplicarEstoquePendente();
                     atualizarDashboard();
                 }
+            }
+        );
+
+        // Atualiza uma tabela pendente assim
+        // que o funcionário sair do campo.
+
+        document.addEventListener(
+            "focusout",
+            () => {
+                window.setTimeout(
+                    aplicarEstoquePendente,
+                    100
+                );
+            }
+        );
+
+        document.addEventListener(
+            "estoque:atualizado",
+            () => {
+                console.debug(
+                    "Estoque Premium atualizado."
+                );
             }
         );
     }
@@ -1058,3 +1106,4 @@
     }
 
 })();
+
