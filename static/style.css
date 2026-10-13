@@ -1,7 +1,7 @@
 
 /* ==========================================
    ESTOQUE INTELIGENTE
-   ESTILO COMPLETO DO SISTEMA
+   STYLE.CSS COMPLETO - PREMIUM
 ========================================== */
 
 :root {
@@ -15,12 +15,8 @@
     --fundo: #f3f6fb;
     --branco: #ffffff;
     --borda: #e5eaf1;
-    --sombra: 0 4px 20px rgba(20, 45, 80, 0.05);
+    --sombra: 0 4px 20px rgba(20, 45, 80, .05);
 }
-
-/* ==========================================
-   CONFIGURACAO GERAL
-========================================== */
 
 * {
     box-sizing: border-box;
@@ -50,12 +46,16 @@ button {
     border-radius: 8px;
     padding: 11px 16px;
     font-weight: bold;
-    transition: background 0.2s ease,
-                transform 0.2s ease;
+    transition: background .2s ease, transform .2s ease;
 }
 
 button:active {
-    transform: scale(0.98);
+    transform: scale(.98);
+}
+
+button:disabled {
+    opacity: .65;
+    cursor: wait;
 }
 
 a {
@@ -76,8 +76,13 @@ p {
     line-height: 1.55;
 }
 
+:focus-visible {
+    outline: 3px solid #93baff;
+    outline-offset: 3px;
+}
+
 /* ==========================================
-   ESTRUTURA PRINCIPAL
+   LAYOUT
 ========================================== */
 
 .layout {
@@ -88,7 +93,7 @@ p {
 .sidebar {
     width: 255px;
     min-width: 255px;
-    background: #ffffff;
+    background: #fff;
     border-right: 1px solid var(--borda);
     padding: 28px 18px;
     display: flex;
@@ -133,8 +138,7 @@ p {
     color: #42526b;
     border-radius: 10px;
     font-size: 14px;
-    transition: background 0.2s ease,
-                color 0.2s ease;
+    transition: .2s ease;
 }
 
 .sidebar nav a:hover,
@@ -148,7 +152,7 @@ p {
 }
 
 .desativado {
-    opacity: 0.5;
+    opacity: .5;
     cursor: not-allowed;
 }
 
@@ -182,7 +186,7 @@ p {
 }
 
 /* ==========================================
-   CONTEUDO PRINCIPAL
+   AREA PRINCIPAL
 ========================================== */
 
 .conteudo {
@@ -216,7 +220,6 @@ p {
 
 .sistema-identificacao strong {
     font-size: 15px;
-    color: var(--texto);
 }
 
 .sistema-identificacao span {
@@ -227,7 +230,7 @@ p {
 .sistema-topbar-usuario {
     font-size: 13px;
     color: #64748b;
-    background: #ffffff;
+    background: #fff;
     border: 1px solid var(--borda);
     border-radius: 20px;
     padding: 9px 13px;
@@ -242,7 +245,7 @@ p {
 }
 
 /* ==========================================
-   CABECALHOS E CARDS ORIGINAIS
+   CARDS E PAINEIS ORIGINAIS
 ========================================== */
 
 .cabecalho {
@@ -262,7 +265,7 @@ p {
 
 .card,
 .painel {
-    background: white;
+    background: #fff;
     border: 1px solid #e8edf4;
     border-radius: 14px;
     padding: 24px;
@@ -321,7 +324,7 @@ p {
 
 .dash-topo h1 {
     font-size: 31px;
-    letter-spacing: -0.7px;
+    letter-spacing: -.7px;
 }
 
 .dash-topo p {
@@ -339,7 +342,6 @@ p {
 .dash-ao-vivo {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
     padding: 9px 13px;
     border-radius: 20px;
     background: #e6f8ee;
@@ -359,7 +361,7 @@ p {
 }
 
 /* ==========================================
-   INDICADORES DO DASHBOARD
+   INDICADORES
 ========================================== */
 
 .dash-cards {
@@ -370,19 +372,18 @@ p {
 }
 
 .dash-card {
-    background: #ffffff;
+    background: #fff;
     border: 1px solid #e8edf4;
     border-radius: 17px;
     padding: 23px;
     box-shadow: var(--sombra);
     min-width: 0;
-    transition: transform 0.2s ease,
-                box-shadow 0.2s ease;
+    transition: .2s ease;
 }
 
 .dash-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(20, 45, 80, 0.08);
+    box-shadow: 0 10px 30px rgba(20, 45, 80, .08);
 }
 
 .dash-card-icone {
@@ -409,7 +410,6 @@ p {
     font-size: 36px;
     font-weight: 800;
     letter-spacing: -1px;
-    color: #17233b;
 }
 
 .dash-card > span {
@@ -424,7 +424,7 @@ p {
 }
 
 .dash-card-verde h2 {
-    color: #15975c;
+    color: var(--verde);
 }
 
 .dash-card-vermelho .dash-card-icone {
@@ -432,7 +432,7 @@ p {
 }
 
 .dash-card-vermelho h2 {
-    color: #df4545;
+    color: var(--vermelho);
 }
 
 .dash-card-azul .dash-card-icone {
@@ -440,7 +440,7 @@ p {
 }
 
 .dash-card-azul h2 {
-    color: #1763d1;
+    color: var(--azul);
 }
 
 /* ==========================================
@@ -455,7 +455,7 @@ p {
 }
 
 .dash-painel {
-    background: #ffffff;
+    background: #fff;
     border: 1px solid #e8edf4;
     border-radius: 17px;
     padding: 24px;
@@ -479,12 +479,7 @@ p {
 .dash-painel-topo p {
     margin: 0;
     font-size: 12px;
-    line-height: 1.6;
 }
-
-/* ==========================================
-   GRAFICO DE ROSCA
-========================================== */
 
 .dash-grafico-area {
     display: flex;
@@ -500,16 +495,10 @@ p {
     height: 190px;
     flex-shrink: 0;
     border-radius: 50%;
-    background: conic-gradient(
-        #15975c 0%,
-        #15975c 0%,
-        #df4545 0%,
-        #df4545 100%
-    );
+    background: #e5eaf1;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.3s ease;
 }
 
 .dash-rosca-centro {
@@ -525,7 +514,6 @@ p {
 
 .dash-rosca-centro strong {
     font-size: 29px;
-    color: #17233b;
 }
 
 .dash-rosca-centro span {
@@ -551,7 +539,7 @@ p {
 
 .dash-legenda-item strong {
     margin-left: auto;
-    color: #17233b;
+    color: var(--texto);
     font-size: 14px;
 }
 
@@ -564,20 +552,16 @@ p {
 }
 
 .dash-bolinha-verde {
-    background: #15975c;
+    background: var(--verde);
 }
 
 .dash-bolinha-vermelha {
-    background: #df4545;
+    background: var(--vermelho);
 }
 
 /* ==========================================
-   CALENDARIO INTELIGENTE
+   CALENDARIO
 ========================================== */
-
-.dash-calendario {
-    width: 100%;
-}
 
 .dash-calendario-topo {
     display: flex;
@@ -600,7 +584,7 @@ p {
 
 .dash-calendario-acoes button {
     background: #edf4ff;
-    color: #1763d1;
+    color: var(--azul);
     padding: 7px 11px;
     font-size: 15px;
 }
@@ -628,7 +612,6 @@ p {
 }
 
 .dash-dia {
-    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -644,13 +627,14 @@ p {
 
 .dash-dia.vazio {
     background: transparent;
+    padding: 0;
 }
 
 .dash-dia.hoje {
-    outline: 2px solid #1763d1;
+    outline: 2px solid var(--azul);
     outline-offset: -2px;
     font-weight: bold;
-    color: #1763d1;
+    color: var(--azul);
 }
 
 .dash-dia.com-movimento {
@@ -659,18 +643,13 @@ p {
     font-weight: bold;
 }
 
-.dash-dia.com-movimento.hoje {
-    outline: 2px solid #1763d1;
-}
-
 .dash-dia small {
     font-size: 9px;
-    color: #15975c;
+    color: var(--verde);
 }
 
 .dash-calendario-info {
     font-size: 11px;
-    color: #8490a4;
     margin: 16px 0 0;
 }
 
@@ -687,7 +666,7 @@ p {
 }
 
 .dash-link-historico {
-    color: #1763d1;
+    color: var(--azul);
     text-decoration: none;
     font-size: 12px;
     font-weight: bold;
@@ -733,7 +712,6 @@ p {
 
 .dash-movimento-conteudo strong {
     display: block;
-    color: #17233b;
     font-size: 13px;
     margin-bottom: 5px;
     overflow-wrap: anywhere;
@@ -741,7 +719,7 @@ p {
 
 .dash-movimento-conteudo span {
     display: block;
-    color: #728096;
+    color: var(--texto-suave);
     font-size: 11px;
     overflow-wrap: anywhere;
 }
@@ -764,7 +742,7 @@ p {
 }
 
 /* ==========================================
-   FORMULARIOS
+   FORMULARIOS GERAIS
 ========================================== */
 
 .form-grid {
@@ -788,8 +766,8 @@ select {
     border-radius: 9px;
     padding: 12px;
     font: inherit;
-    background: white;
-    color: #17233b;
+    background: #fff;
+    color: var(--texto);
 }
 
 textarea {
@@ -800,12 +778,12 @@ input:focus,
 textarea:focus,
 select:focus {
     outline: 2px solid #b4d0ff;
-    border-color: #1763d1;
+    border-color: var(--azul);
 }
 
 .btn-principal,
 .btn-busca {
-    background: #1763d1;
+    background: var(--azul);
     color: white;
     margin-top: 16px;
 }
@@ -831,6 +809,647 @@ select:focus {
 
 .btn-saldo:hover {
     background: #c8efd8;
+}
+
+/* ==========================================
+   CADASTRO UNIVERSAL PREMIUM
+========================================== */
+
+.cadastro-premium {
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+    border: 1px solid #dfe8f6;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 15px 50px rgba(26, 55, 100, .07);
+    scroll-margin-top: 25px;
+}
+
+.cadastro-premium::before {
+    content: "";
+    display: block;
+    height: 5px;
+    background: linear-gradient(
+        90deg,
+        #1763d1,
+        #4f8fff,
+        #32b99c
+    );
+}
+
+/* CABECALHO DO CADASTRO */
+
+.cadastro-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 30px 32px;
+    background: linear-gradient(
+        115deg,
+        #f4f8ff 0%,
+        #fff 65%,
+        #f0fcf8 100%
+    );
+    border-bottom: 1px solid #eaf0f8;
+}
+
+.cadastro-cabecalho-icone {
+    width: 66px;
+    height: 66px;
+    min-width: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 31px;
+    border-radius: 19px;
+    background: #e1edff;
+    box-shadow: inset 0 0 0 1px #c9ddff;
+}
+
+.cadastro-cabecalho > div:nth-child(2) {
+    flex: 1;
+    min-width: 0;
+}
+
+.cadastro-etiqueta {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #1763d1;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.cadastro-cabecalho h2 {
+    margin: 0 0 8px;
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -.6px;
+    color: #152a4b;
+}
+
+.cadastro-cabecalho p {
+    margin: 0;
+    font-size: 13px;
+}
+
+.cadastro-selo {
+    align-self: flex-start;
+    padding: 10px 13px;
+    background: #e4f8ee;
+    color: #087a43;
+    border: 1px solid #c9efd9;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* PASSO A PASSO */
+
+.cadastro-etapas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 27px 32px;
+    border-bottom: 1px solid #edf1f7;
+}
+
+.cadastro-etapa {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.cadastro-etapa-numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    min-width: 35px;
+    border-radius: 50%;
+    color: #1763d1;
+    background: #eaf2ff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.cadastro-etapa:first-child .cadastro-etapa-numero {
+    background: #1763d1;
+    color: white;
+    box-shadow: 0 4px 12px rgba(23, 99, 209, .2);
+}
+
+.cadastro-etapa strong {
+    display: block;
+    font-size: 12px;
+    color: #233650;
+}
+
+.cadastro-etapa small {
+    display: block;
+    font-size: 10px;
+    color: #8490a4;
+    margin-top: 4px;
+}
+
+.cadastro-etapa-linha {
+    flex: 1;
+    max-width: 75px;
+    height: 2px;
+    background: #e4eaf3;
+}
+
+/* BLOCOS DO FORMULARIO */
+
+.cadastro-bloco {
+    padding: 30px 32px;
+    border-bottom: 1px solid #edf1f7;
+}
+
+.cadastro-titulo-secao {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin-bottom: 23px;
+}
+
+.cadastro-numero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 39px;
+    height: 39px;
+    min-width: 39px;
+    border-radius: 12px;
+    background: #edf4ff;
+    color: #1763d1;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.cadastro-titulo-secao h3 {
+    margin: 0 0 6px;
+    font-size: 19px;
+    letter-spacing: -.3px;
+}
+
+.cadastro-titulo-secao p {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* CARTOES DE ESCOLHA */
+
+.cadastro-tipos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.cadastro-tipo-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 11px;
+    min-width: 0;
+    min-height: 218px;
+    padding: 23px 20px;
+    margin: 0;
+    border: 2px solid #e7edf5;
+    border-radius: 17px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .2s ease,
+                background .2s ease,
+                box-shadow .2s ease,
+                transform .2s ease;
+}
+
+.cadastro-tipo-card:hover {
+    transform: translateY(-3px);
+    border-color: #a9c8fa;
+    box-shadow: 0 12px 25px rgba(23, 99, 209, .08);
+}
+
+.cadastro-tipo-card.ativo {
+    border-color: #1763d1;
+    background: linear-gradient(
+        145deg,
+        #f1f7ff,
+        #ffffff
+    );
+    box-shadow: 0 7px 22px rgba(23, 99, 209, .11);
+}
+
+.cadastro-tipo-card:focus-within {
+    outline: 3px solid #b4d0ff;
+    outline-offset: 3px;
+}
+
+.cadastro-tipo-card input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.cadastro-tipo-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 51px;
+    height: 51px;
+    border-radius: 15px;
+    background: #f0f4fa;
+    font-size: 25px;
+}
+
+.cadastro-tipo-card.ativo .cadastro-tipo-icone {
+    background: #e0edff;
+}
+
+.cadastro-tipo-card strong {
+    font-size: 15px;
+    color: #17233b;
+    line-height: 1.3;
+}
+
+.cadastro-tipo-card small {
+    color: #728096;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 1.55;
+}
+
+.cadastro-tipo-exemplo {
+    display: block;
+    margin-top: auto;
+    padding: 8px 10px;
+    max-width: 100%;
+    background: #f3f6fb;
+    color: #65758d;
+    border-radius: 7px;
+    font-family: Consolas, monospace;
+    font-size: 10px;
+    font-weight: normal;
+    overflow-wrap: anywhere;
+}
+
+.cadastro-tipo-check {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #e9eef5;
+    color: transparent;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.cadastro-tipo-card.ativo .cadastro-tipo-check {
+    background: #1763d1;
+    color: #fff;
+}
+
+/* AJUDA CONTEXTUAL */
+
+.cadastro-ajuda {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    margin-top: 21px;
+    background: #eff6ff;
+    border: 1px solid #dceaff;
+    border-radius: 12px;
+}
+
+.cadastro-ajuda > span {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.cadastro-ajuda p {
+    margin: 0;
+    color: #496380;
+    font-size: 12px;
+    line-height: 1.65;
+    font-weight: normal;
+}
+
+.cadastro-ajuda strong {
+    color: #1d4f92;
+}
+
+/* CAMPOS PREMIUM */
+
+.cadastro-form-grid {
+    gap: 20px;
+}
+
+.cadastro-campo {
+    min-width: 0;
+}
+
+.cadastro-campo label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 9px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #34445d;
+}
+
+.cadastro-obrigatorio {
+    color: #e04444;
+    font-weight: 800;
+}
+
+.cadastro-opcional {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 7px;
+    border-radius: 5px;
+    background: #f0f3f8;
+    color: #8a96a8;
+    font-size: 9px;
+    font-weight: normal;
+}
+
+.cadastro-premium input:not([type="radio"]):not([type="hidden"]),
+.cadastro-premium textarea,
+.cadastro-premium select {
+    border: 1px solid #dce5f0;
+    border-radius: 11px;
+    padding: 14px 15px;
+    min-height: 49px;
+    background: #fbfcff;
+    color: #17233b;
+    font-size: 13px;
+    transition: border-color .2s ease,
+                background .2s ease,
+                box-shadow .2s ease;
+}
+
+.cadastro-premium input:focus,
+.cadastro-premium textarea:focus,
+.cadastro-premium select:focus {
+    outline: none;
+    background: #fff;
+    border-color: #1763d1;
+    box-shadow: 0 0 0 4px rgba(23, 99, 209, .10);
+}
+
+.cadastro-premium input::placeholder,
+.cadastro-premium textarea::placeholder {
+    color: #a0aabb;
+}
+
+.cadastro-campo > small {
+    display: block;
+    margin-top: 8px;
+    color: #8490a4;
+    font-size: 11px;
+    font-weight: normal;
+    line-height: 1.5;
+}
+
+.cadastro-premium textarea {
+    min-height: 170px;
+    resize: vertical;
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+/* IDENTIFICADORES */
+
+#campo-identificadores > .cadastro-campo > label {
+    margin-bottom: 11px;
+}
+
+.cadastro-textarea-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.cadastro-textarea-rodape > span {
+    color: #8490a4;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.cadastro-textarea-rodape strong {
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: #eaf2ff;
+    color: #1763d1;
+    font-size: 11px;
+}
+
+/* PREVIA DO LOTE */
+
+.cadastro-previa {
+    margin-top: 22px;
+    padding: 20px;
+    border: 1px solid #e2eaf5;
+    border-radius: 14px;
+    background: #fafcff;
+}
+
+.cadastro-previa-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.cadastro-previa-topo strong {
+    font-size: 13px;
+    color: #26364e;
+}
+
+.cadastro-previa-topo > span {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.cadastro-previa-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    min-height: 43px;
+    align-items: center;
+}
+
+.cadastro-previa-lista p {
+    margin: 0;
+    color: #8490a4;
+    font-size: 12px;
+}
+
+.cadastro-previa-item {
+    display: inline-block;
+    max-width: 100%;
+    padding: 9px 11px;
+    border-radius: 8px;
+    border: 1px solid #cdebdc;
+    background: #edfaf3;
+    color: #12804d;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+}
+
+.cadastro-previa-item.repetido {
+    border-color: #ffc8c8;
+    background: #fff0f0;
+    color: #c32626;
+}
+
+/* RESUMO DO CADASTRO */
+
+.cadastro-resumo {
+    margin: 30px 32px 0;
+    padding: 25px;
+    border: 1px solid #cfe0fa;
+    border-radius: 16px;
+    background: linear-gradient(
+        135deg,
+        #f0f6ff 0%,
+        #ffffff 100%
+    );
+}
+
+.cadastro-resumo-topo {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding-bottom: 18px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #dce8f8;
+}
+
+.cadastro-resumo-topo > span {
+    font-size: 26px;
+}
+
+.cadastro-resumo-topo h3 {
+    margin: 0 0 5px;
+    font-size: 17px;
+    color: #17233b;
+}
+
+.cadastro-resumo-topo p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.cadastro-resumo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.cadastro-resumo-grid > div {
+    min-width: 0;
+    padding: 13px;
+    background: rgba(255, 255, 255, .85);
+    border: 1px solid #e2eaf5;
+    border-radius: 10px;
+}
+
+.cadastro-resumo-grid small {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 10px;
+    color: #8490a4;
+}
+
+.cadastro-resumo-grid strong {
+    display: block;
+    font-size: 12px;
+    color: #26364e;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+/* RODAPE E BOTAO DE CADASTRO */
+
+.cadastro-final {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 22px;
+    padding: 28px 32px 32px;
+}
+
+.cadastro-final-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 420px;
+}
+
+.cadastro-final-info > span {
+    font-size: 22px;
+}
+
+.cadastro-final-info p {
+    margin: 0;
+    color: #8490a4;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.cadastro-btn-salvar {
+    margin: 0;
+    padding: 17px 26px;
+    min-height: 53px;
+    border-radius: 12px;
+    background: linear-gradient(
+        110deg,
+        #1763d1,
+        #327ff0
+    );
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 8px 22px rgba(23, 99, 209, .20);
+    transition: transform .2s ease,
+                box-shadow .2s ease;
+}
+
+.cadastro-btn-salvar:hover:not(:disabled) {
+    background: linear-gradient(
+        110deg,
+        #104ca7,
+        #1763d1
+    );
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(23, 99, 209, .28);
 }
 
 /* ==========================================
@@ -949,7 +1568,7 @@ td code {
 }
 
 /* ==========================================
-   MENSAGENS DO SISTEMA
+   ALERTAS
 ========================================== */
 
 .area-alertas {
@@ -987,12 +1606,12 @@ td code {
 }
 
 .login-card {
-    background: white;
+    background: #fff;
     padding: 38px;
     border-radius: 16px;
     width: 100%;
     max-width: 410px;
-    box-shadow: 0 15px 50px rgba(20, 45, 80, 0.08);
+    box-shadow: 0 15px 50px rgba(20, 45, 80, .08);
 }
 
 .login-icone {
@@ -1018,12 +1637,12 @@ td code {
 ========================================== */
 
 .chat-container {
-    background: white;
+    background: #fff;
     border: 1px solid #e5eaf1;
     border-radius: 16px;
     overflow: hidden;
     max-width: 1050px;
-    box-shadow: 0 5px 25px rgba(20, 45, 80, 0.04);
+    box-shadow: 0 5px 25px rgba(20, 45, 80, .04);
 }
 
 .chat-topo {
@@ -1061,7 +1680,7 @@ td code {
 }
 
 .mensagem.ia {
-    background: #ffffff;
+    background: #fff;
     border: 1px solid #e5eaf1;
     align-self: flex-start;
     color: #26364e;
@@ -1111,7 +1730,7 @@ td code {
    RESPONSIVIDADE - NOTEBOOK
 ========================================== */
 
-@media (max-width: 1200px) {
+@media (max-width: 1250px) {
 
     .conteudo {
         padding: 25px;
@@ -1125,10 +1744,43 @@ td code {
         grid-template-columns: 1fr;
     }
 
+    .cadastro-resumo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
 }
 
 /* ==========================================
-   RESPONSIVIDADE - TABLET E CELULAR
+   RESPONSIVIDADE - TABLET
+========================================== */
+
+@media (max-width: 1000px) {
+
+    .cadastro-tipos {
+        grid-template-columns: 1fr;
+    }
+
+    .cadastro-tipo-card {
+        min-height: 0;
+        padding: 20px;
+    }
+
+    .cadastro-etapas {
+        gap: 10px;
+    }
+
+    .cadastro-etapa-linha {
+        max-width: 35px;
+    }
+
+    .cadastro-selo {
+        display: none;
+    }
+
+}
+
+/* ==========================================
+   RESPONSIVIDADE - CELULAR
 ========================================== */
 
 @media (max-width: 850px) {
@@ -1145,8 +1797,8 @@ td code {
         width: 270px;
         min-width: 270px;
         transform: translateX(-100%);
-        transition: transform 0.25s ease;
-        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.08);
+        transition: transform .25s ease;
+        box-shadow: 5px 0 25px rgba(0, 0, 0, .08);
     }
 
     .sidebar.sidebar-aberta {
@@ -1277,6 +1929,91 @@ td code {
         flex-wrap: wrap;
     }
 
+    .cadastro-premium {
+        border-radius: 15px;
+    }
+
+    .cadastro-cabecalho {
+        padding: 23px 18px;
+        gap: 13px;
+        align-items: flex-start;
+    }
+
+    .cadastro-cabecalho-icone {
+        width: 49px;
+        height: 49px;
+        min-width: 49px;
+        font-size: 23px;
+        border-radius: 13px;
+    }
+
+    .cadastro-cabecalho h2 {
+        font-size: 20px;
+    }
+
+    .cadastro-etapas {
+        justify-content: space-between;
+        padding: 20px 15px;
+        gap: 7px;
+    }
+
+    .cadastro-etapa {
+        flex-direction: column;
+        text-align: center;
+        gap: 6px;
+    }
+
+    .cadastro-etapa strong {
+        font-size: 10px;
+    }
+
+    .cadastro-etapa small,
+    .cadastro-etapa-linha {
+        display: none;
+    }
+
+    .cadastro-etapa-numero {
+        width: 31px;
+        height: 31px;
+        min-width: 31px;
+    }
+
+    .cadastro-bloco {
+        padding: 25px 18px;
+    }
+
+    .cadastro-titulo-secao h3 {
+        font-size: 17px;
+    }
+
+    .cadastro-tipo-card {
+        padding: 18px;
+    }
+
+    .cadastro-resumo {
+        margin: 20px 18px 0;
+        padding: 18px;
+    }
+
+    .cadastro-resumo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cadastro-final {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 22px 18px;
+    }
+
+    .cadastro-btn-salvar {
+        width: 100%;
+        white-space: normal;
+    }
+
+    .cadastro-previa {
+        padding: 15px;
+    }
+
     .chat-mensagens {
         height: 55vh;
         padding: 14px;
@@ -1292,6 +2029,22 @@ td code {
 
     .chat-topo {
         padding: 16px;
+    }
+
+}
+
+/* ==========================================
+   ACESSIBILIDADE
+========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
     }
 
 }
