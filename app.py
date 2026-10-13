@@ -24,7 +24,7 @@ from werkzeug.security import (
     check_password_hash
 )
 
-from assistente_ia import criar_resposta
+from assistente_ia import criar_resposta, configuracao_ia
 
 
 # ==========================================
@@ -1296,55 +1296,75 @@ def assistente():
     )
 
 
-@app.route(
-    "/api/assistente",
-    methods=["POST"]
-)
+@app.route("/api/assistente", methods=["POST"])
 @login_obrigatorio
 def api_assistente():
+    dados = request.get_json(silent=True) or {}
 
-    dados = request.get_json(
-        silent=True
-    ) or {}
+    if not isinstance(dados, dict):
+        return jsonify({"erro": "Dados inválidos."}), 400
 
-    pergunta = str(
-        dados.get("pergunta", "")
-    ).strip()
+    pergunta = str(dados.get("pergunta", "")).strip()
+    conversa = dados.get("conversa", [])
 
     if not pergunta:
-        return jsonify({
-            "erro": "Digite uma pergunta."
-        }), 400
+        return jsonify({"erro": "Digite uma pergunta."}), 400
 
     if len(pergunta) > 2000:
         return jsonify({
-            "erro": "Pergunta muito longa."
+            "erro": "Pergunta muito longa. Limite de 2.000 caracteres."
         }), 400
 
-    try:
+    if not isinstance(conversa, list):
+        conversa = []
 
+    try:
         resposta = criar_resposta(
             pergunta,
             db,
             Equipamento,
-            Historico
+            Historico,
+            conversa=conversa[-12:]
         )
 
-        return jsonify({
-            "resposta": resposta
-        })
+        return jsonify({"resposta": resposta})
 
     except Exception:
-
-        app.logger.exception(
-            "Erro no Assistente IA"
-        )
+        db.session.rollback()
+        app.logger.exception("Erro no Assistente IA")
 
         return jsonify({
             "erro": (
-                "Nao foi possivel consultar "
-                "o assistente agora."
+                "A IA está temporariamente indisponível. "
+                "Tente novamente em alguns instantes."
             )
+        }), 503
+
+
+@app.route("/api/assistente/status")
+@login_obrigatorio
+def api_assistente_status():
+    from assistente_ia import configuracao_ia
+
+    configuracao = configuracao_ia()
+
+    try:
+        db.session.execute(text("SELECT 1"))
+
+        return jsonify({
+            "servidor": "online",
+            "banco": "online",
+            "ia_configurada": configuracao["configurada"],
+            "modelo": configuracao["modelo"],
+        })
+
+    except Exception:
+        db.session.rollback()
+
+        return jsonify({
+            "servidor": "online",
+            "banco": "indisponivel",
+            "ia_configurada": configuracao["configurada"],
         }), 503
 
 
@@ -1394,4 +1414,3 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run(debug=False)
-
