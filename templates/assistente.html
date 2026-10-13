@@ -2,125 +2,614 @@
 {% extends "base.html" %}
 {% block conteudo %}
 
-<div class="cabecalho">
-    <div>
-        <h1>🤖 Assistente Inteligente</h1>
-        <p>Converse com a inteligência artificial do seu estoque.</p>
-    </div>
-</div>
-
-<div class="chat-container">
-    <div class="chat-topo">
+<div class="ia2-pagina">
+    <div class="ia2-cabecalho">
         <div>
-            <strong>🤖 Estoque IA</strong>
-            <small>Assistente de gestão e telecomunicações</small>
+            <span class="ia2-etiqueta">INTELIGÊNCIA ARTIFICIAL</span>
+            <h1>✦ Estoque IA 2.0</h1>
+            <p>Seu assistente inteligente de estoque e telecomunicações.</p>
         </div>
-        <span class="status saldo">● Disponível</span>
-    </div>
 
-    <div class="chat-mensagens" id="mensagens">
-        <div class="mensagem ia">
-            Olá! 👋 Sou o assistente do Estoque Inteligente.
-
-            Posso ajudar a consultar equipamentos, MACs,
-            números de série, saldo, movimentações e
-            responder dúvidas sobre telecomunicações.
-
-            Como posso ajudar?
+        <div class="ia2-conexao" id="ia2-conexao">
+            <span class="ia2-ponto"></span>
+            <span id="ia2-status-texto">Verificando conexão...</span>
         </div>
     </div>
 
-    <div class="chat-sugestoes">
-        <button type="button"
-            onclick="perguntaRapida('Qual o total do estoque?')">
-            📦 Total do estoque
-        </button>
+    <div class="ia2-app">
 
-        <button type="button"
-            onclick="perguntaRapida('Quais equipamentos estão em uso?')">
-            🔴 Equipamentos em uso
-        </button>
+        <aside class="ia2-lateral" id="ia2-lateral">
+            <div class="ia2-lateral-topo">
+                <div class="ia2-marca">
+                    <span class="ia2-marca-icone">✦</span>
+                    <div>
+                        <strong>Estoque IA</strong>
+                        <small>Workspace inteligente</small>
+                    </div>
+                </div>
 
-        <button type="button"
-            onclick="perguntaRapida('Quais produtos estão disponíveis?')">
-            🟢 Produtos disponíveis
-        </button>
+                <button
+                    type="button"
+                    class="ia2-novo"
+                    id="ia2-novo"
+                >
+                    ＋ Nova conversa
+                </button>
+            </div>
+
+            <div class="ia2-historico-titulo">
+                <span>SUAS CONVERSAS</span>
+                <span>◷</span>
+            </div>
+
+            <div class="ia2-lista" id="ia2-lista"></div>
+
+            <div class="ia2-lateral-rodape">
+                <span>🔒</span>
+                <div>
+                    <strong>Consulta segura</strong>
+                    <small>A IA não altera seu estoque.</small>
+                </div>
+            </div>
+        </aside>
+
+        <section class="ia2-principal">
+            <header class="ia2-barra">
+                <div class="ia2-barra-esquerda">
+                    <button
+                        type="button"
+                        class="ia2-menu"
+                        id="ia2-menu"
+                        aria-label="Abrir conversas"
+                    >☰</button>
+
+                    <span class="ia2-avatar">✦</span>
+
+                    <div>
+                        <strong>Assistente Inteligente</strong>
+                        <small>Gestão de estoque • Telecom</small>
+                    </div>
+                </div>
+
+                <button
+                    type="button"
+                    class="ia2-limpar"
+                    id="ia2-limpar"
+                    title="Começar uma nova conversa"
+                >
+                    ↻ <span>Novo chat</span>
+                </button>
+            </header>
+
+            <div class="ia2-mensagens" id="ia2-mensagens">
+            </div>
+
+            <div class="ia2-rodape-chat">
+                <div class="ia2-sugestoes" id="ia2-sugestoes">
+                    <button type="button"
+                        data-pergunta="Qual é o total do estoque?">
+                        📦 Resumo do estoque
+                    </button>
+
+                    <button type="button"
+                        data-pergunta="Quantas unidades estão em uso?">
+                        🔴 Equipamentos em uso
+                    </button>
+
+                    <button type="button"
+                        data-pergunta="Quais produtos estão disponíveis?">
+                        🟢 Disponíveis
+                    </button>
+
+                    <button type="button"
+                        data-pergunta="Mostre as últimas movimentações.">
+                        📋 Movimentações
+                    </button>
+                </div>
+
+                <form id="ia2-form" class="ia2-form">
+                    <textarea
+                        id="ia2-pergunta"
+                        rows="1"
+                        maxlength="2000"
+                        placeholder="Pergunte qualquer coisa ao Estoque IA..."
+                        aria-label="Sua mensagem"
+                        required
+                    ></textarea>
+
+                    <button
+                        type="submit"
+                        id="ia2-enviar"
+                        aria-label="Enviar mensagem"
+                    >
+                        ➤
+                    </button>
+                </form>
+
+                <div class="ia2-ajuda">
+                    <span>Enter para enviar • Shift + Enter para quebrar linha</span>
+                    <span id="ia2-contador">0 / 2000</span>
+                </div>
+
+                <p class="ia2-aviso">
+                    A IA pode cometer erros. Confirme informações importantes.
+                </p>
+            </div>
+        </section>
     </div>
-
-    <form class="chat-form" id="form-chat">
-        <input
-            type="text"
-            id="pergunta"
-            placeholder="Pergunte alguma coisa ao assistente..."
-            maxlength="2000"
-            autocomplete="off"
-            required
-        >
-        <button type="submit" class="btn-principal">
-            Enviar ➤
-        </button>
-    </form>
 </div>
 
 <script>
-const formulario = document.getElementById("form-chat");
-const entrada = document.getElementById("pergunta");
-const mensagens = document.getElementById("mensagens");
+(function () {
+    "use strict";
 
-let enviando = false;
+    const CHAVE = "estoque_ia2_conversas_v1";
+    const MAX_CONVERSAS = 20;
+    const MAX_MENSAGENS = 60;
 
-function adicionarMensagem(texto, classe) {
-    const elemento = document.createElement("div");
-    elemento.className = "mensagem " + classe;
-    elemento.textContent = texto;
-    mensagens.appendChild(elemento);
-    mensagens.scrollTop = mensagens.scrollHeight;
-    return elemento;
-}
+    const $ = (id) => document.getElementById(id);
 
-async function enviarPergunta(texto) {
-    if (enviando || !texto.trim()) return;
+    const mensagensEl = $("ia2-mensagens");
+    const listaEl = $("ia2-lista");
+    const entrada = $("ia2-pergunta");
+    const enviarBtn = $("ia2-enviar");
+    const sugestoes = $("ia2-sugestoes");
+    const lateral = $("ia2-lateral");
 
-    enviando = true;
-    adicionarMensagem(texto, "usuario-chat");
+    let conversas = [];
+    let conversaAtual = null;
+    let enviando = false;
 
-    entrada.value = "";
-    const carregando = adicionarMensagem(
-        "Consultando o estoque...", "ia"
-    );
+    function identificador() {
+        if (window.crypto && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+        return String(Date.now()) + "-" + Math.random();
+    }
 
-    try {
-        const resposta = await fetch("/api/assistente", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ pergunta: texto })
-        });
+    function carregar() {
+        try {
+            const salvas = JSON.parse(localStorage.getItem(CHAVE));
 
-        const dados = await resposta.json();
+            if (Array.isArray(salvas)) {
+                conversas = salvas.filter(c =>
+                    c &&
+                    typeof c.id === "string" &&
+                    Array.isArray(c.mensagens)
+                ).slice(0, MAX_CONVERSAS);
+            }
+        } catch (_) {
+            conversas = [];
+        }
+    }
 
-        carregando.textContent = dados.resposta ||
-            dados.erro ||
-            "Não consegui responder agora.";
+    function salvar() {
+        try {
+            localStorage.setItem(
+                CHAVE,
+                JSON.stringify(conversas.slice(0, MAX_CONVERSAS))
+            );
+        } catch (_) {
+            // Navegador pode bloquear armazenamento.
+        }
+    }
 
-    } catch (erro) {
-        carregando.textContent =
-            "Erro de conexão. Tente novamente.";
-    } finally {
-        enviando = false;
+    function obterAtual() {
+        return conversas.find(c => c.id === conversaAtual);
+    }
+
+    function novaConversa() {
+        if (enviando) return;
+
+        const conversa = {
+            id: identificador(),
+            titulo: "Nova conversa",
+            criada: Date.now(),
+            mensagens: []
+        };
+
+        conversas.unshift(conversa);
+        conversas = conversas.slice(0, MAX_CONVERSAS);
+        conversaAtual = conversa.id;
+
+        salvar();
+        renderizarTudo();
+        lateral.classList.remove("ia2-aberta");
         entrada.focus();
     }
-}
 
-function perguntaRapida(texto) {
-    enviarPergunta(texto);
-}
+    function abrirConversa(id) {
+        if (enviando) return;
 
-formulario.addEventListener("submit", function(evento) {
-    evento.preventDefault();
-    enviarPergunta(entrada.value);
-});
+        if (!conversas.some(c => c.id === id)) return;
+
+        conversaAtual = id;
+        renderizarTudo();
+        lateral.classList.remove("ia2-aberta");
+    }
+
+    function excluirConversa(id) {
+        if (enviando) return;
+
+        if (!confirm("Excluir esta conversa deste navegador?")) {
+            return;
+        }
+
+        conversas = conversas.filter(c => c.id !== id);
+
+        if (conversaAtual === id) {
+            conversaAtual = conversas[0]?.id || null;
+        }
+
+        if (!conversaAtual) {
+            novaConversa();
+            return;
+        }
+
+        salvar();
+        renderizarTudo();
+    }
+
+    function renderizarLista() {
+        listaEl.replaceChildren();
+
+        conversas.forEach(conversa => {
+            const linha = document.createElement("div");
+            linha.className = "ia2-item" +
+                (conversa.id === conversaAtual ? " ativo" : "");
+
+            const abrir = document.createElement("button");
+            abrir.type = "button";
+            abrir.className = "ia2-item-abrir";
+            abrir.textContent = "◉ " + conversa.titulo;
+            abrir.title = conversa.titulo;
+            abrir.addEventListener("click", () =>
+                abrirConversa(conversa.id)
+            );
+
+            const excluir = document.createElement("button");
+            excluir.type = "button";
+            excluir.className = "ia2-item-excluir";
+            excluir.textContent = "×";
+            excluir.title = "Excluir conversa";
+            excluir.setAttribute(
+                "aria-label", "Excluir " + conversa.titulo
+            );
+            excluir.addEventListener("click", () =>
+                excluirConversa(conversa.id)
+            );
+
+            linha.append(abrir, excluir);
+            listaEl.appendChild(linha);
+        });
+    }
+
+    function criarMensagem(papel, texto, temporaria = false) {
+        const linha = document.createElement("div");
+        linha.className = "ia2-linha " +
+            (papel === "user" ? "ia2-usuario" : "ia2-assistente");
+
+        const avatar = document.createElement("span");
+        avatar.className = "ia2-msg-avatar";
+        avatar.textContent = papel === "user" ? "👤" : "✦";
+
+        const coluna = document.createElement("div");
+        coluna.className = "ia2-msg-coluna";
+
+        const nome = document.createElement("strong");
+        nome.className = "ia2-msg-nome";
+        nome.textContent = papel === "user" ? "Você" : "Estoque IA";
+
+        const balao = document.createElement("div");
+        balao.className = "ia2-balao";
+        balao.textContent = texto;
+
+        coluna.append(nome, balao);
+
+        if (papel !== "user" && !temporaria) {
+            const copiar = document.createElement("button");
+            copiar.type = "button";
+            copiar.className = "ia2-copiar";
+            copiar.textContent = "⧉ Copiar resposta";
+
+            copiar.addEventListener("click", async () => {
+                try {
+                    await navigator.clipboard.writeText(texto);
+                    copiar.textContent = "✓ Copiado!";
+                    setTimeout(() => {
+                        copiar.textContent = "⧉ Copiar resposta";
+                    }, 1800);
+                } catch (_) {
+                    copiar.textContent = "Não foi possível copiar";
+                }
+            });
+
+            coluna.appendChild(copiar);
+        }
+
+        linha.append(avatar, coluna);
+        mensagensEl.appendChild(linha);
+        mensagensEl.scrollTop = mensagensEl.scrollHeight;
+
+        return { linha, balao };
+    }
+
+    function mostrarBoasVindas() {
+        const area = document.createElement("div");
+        area.className = "ia2-boas-vindas";
+
+        const simbolo = document.createElement("div");
+        simbolo.className = "ia2-boas-icone";
+        simbolo.textContent = "✦";
+
+        const titulo = document.createElement("h2");
+        titulo.textContent = "Como posso ajudar hoje?";
+
+        const descricao = document.createElement("p");
+        descricao.textContent =
+            "Sou a Estoque IA, sua assistente de gestão e " +
+            "telecomunicações. Consulte produtos, quantidades, " +
+            "MACs, seriais ou tire dúvidas técnicas.";
+
+        const grade = document.createElement("div");
+        grade.className = "ia2-inicio-grade";
+
+        const opcoes = [
+            ["📦", "Analisar estoque",
+                "Veja totais, saldos e equipamentos em uso.",
+                "Faça uma análise geral do meu estoque."],
+            ["🔎", "Buscar equipamento",
+                "Consulte produtos por MAC, serial ou modelo.",
+                "Como posso consultar um equipamento pelo MAC?"],
+            ["📋", "Ver movimentações",
+                "Confira as movimentações mais recentes.",
+                "Quais foram as últimas movimentações?"],
+            ["🌐", "Suporte telecom",
+                "Tire dúvidas sobre redes e equipamentos.",
+                "Explique a diferença entre roteador e ONU."]
+        ];
+
+        opcoes.forEach(([icone, nome, desc, pergunta]) => {
+            const botao = document.createElement("button");
+            botao.type = "button";
+            botao.className = "ia2-inicio-card";
+
+            const ic = document.createElement("span");
+            ic.textContent = icone;
+
+            const tituloCard = document.createElement("strong");
+            tituloCard.textContent = nome;
+
+            const descricaoCard = document.createElement("small");
+            descricaoCard.textContent = desc;
+
+            botao.append(ic, tituloCard, descricaoCard);
+            botao.addEventListener("click", () =>
+                enviarPergunta(pergunta)
+            );
+
+            grade.appendChild(botao);
+        });
+
+        area.append(simbolo, titulo, descricao, grade);
+        mensagensEl.appendChild(area);
+    }
+
+    function renderizarMensagens() {
+        mensagensEl.replaceChildren();
+
+        const conversa = obterAtual();
+
+        if (!conversa || conversa.mensagens.length === 0) {
+            mostrarBoasVindas();
+            sugestoes.hidden = false;
+            return;
+        }
+
+        sugestoes.hidden = true;
+
+        conversa.mensagens.forEach(m =>
+            criarMensagem(m.role, m.content)
+        );
+    }
+
+    function renderizarTudo() {
+        renderizarLista();
+        renderizarMensagens();
+    }
+
+    function adicionarAoHistorico(role, content) {
+        const conversa = obterAtual();
+        if (!conversa) return;
+
+        conversa.mensagens.push({ role, content });
+        conversa.mensagens = conversa.mensagens.slice(-MAX_MENSAGENS);
+
+        if (
+            role === "user" &&
+            conversa.titulo === "Nova conversa"
+        ) {
+            conversa.titulo =
+                content.slice(0, 38) +
+                (content.length > 38 ? "..." : "");
+        }
+
+        salvar();
+        renderizarLista();
+    }
+
+    async function enviarPergunta(texto) {
+        texto = String(texto || "").trim();
+
+        if (!texto || enviando) return;
+
+        if (texto.length > 2000) {
+            alert("A pergunta pode ter até 2.000 caracteres.");
+            return;
+        }
+
+        const conversa = obterAtual();
+        if (!conversa) return;
+
+        const contexto = conversa.mensagens
+            .filter(m => m.role === "user" || m.role === "assistant")
+            .slice(-12);
+
+        enviando = true;
+        enviarBtn.disabled = true;
+        entrada.disabled = true;
+
+        adicionarAoHistorico("user", texto);
+        renderizarMensagens();
+
+        entrada.value = "";
+        atualizarContador();
+
+        const aguardando = criarMensagem(
+            "assistant",
+            "Analisando sua pergunta e consultando o estoque...",
+            true
+        );
+
+        try {
+            const resposta = await fetch(
+                "{{ url_for('api_assistente') }}",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify({
+                        pergunta: texto,
+                        conversa: contexto
+                    })
+                }
+            );
+
+            let dados;
+
+            try {
+                dados = await resposta.json();
+            } catch (_) {
+                throw new Error(
+                    "O servidor não retornou uma resposta válida."
+                );
+            }
+
+            if (!resposta.ok) {
+                throw new Error(
+                    dados.erro || "Não foi possível consultar a IA."
+                );
+            }
+
+            const respostaTexto = String(
+                dados.resposta || "Não consegui responder agora."
+            );
+
+            aguardando.linha.remove();
+            adicionarAoHistorico("assistant", respostaTexto);
+            criarMensagem("assistant", respostaTexto);
+
+        } catch (erro) {
+            aguardando.linha.remove();
+
+            criarMensagem(
+                "assistant",
+                "⚠️ " + (
+                    erro.message ||
+                    "Falha de conexão. Tente novamente."
+                )
+            );
+        } finally {
+            enviando = false;
+            enviarBtn.disabled = false;
+            entrada.disabled = false;
+            entrada.focus();
+        }
+    }
+
+    function atualizarContador() {
+        $("ia2-contador").textContent =
+            entrada.value.length + " / 2000";
+
+        entrada.style.height = "auto";
+        entrada.style.height =
+            Math.min(entrada.scrollHeight, 150) + "px";
+    }
+
+    async function verificarStatus() {
+        const caixa = $("ia2-conexao");
+        const texto = $("ia2-status-texto");
+
+        try {
+            const resposta = await fetch(
+                "{{ url_for('api_assistente_status') }}",
+                { credentials: "same-origin", cache: "no-store" }
+            );
+
+            if (!resposta.ok) throw new Error("Servidor indisponível");
+
+            const dados = await resposta.json();
+
+            if (dados.banco !== "online") {
+                throw new Error("Banco indisponível");
+            }
+
+            if (!dados.ia_configurada) {
+                caixa.className = "ia2-conexao aviso";
+                texto.textContent = "IA não configurada";
+            } else {
+                caixa.className = "ia2-conexao online";
+                texto.textContent = "Servidor conectado";
+            }
+
+        } catch (_) {
+            caixa.className = "ia2-conexao offline";
+            texto.textContent = "Conexão indisponível";
+        }
+    }
+
+    $("ia2-form").addEventListener("submit", evento => {
+        evento.preventDefault();
+        enviarPergunta(entrada.value);
+    });
+
+    entrada.addEventListener("keydown", evento => {
+        if (evento.key === "Enter" && !evento.shiftKey) {
+            evento.preventDefault();
+            enviarPergunta(entrada.value);
+        }
+    });
+
+    entrada.addEventListener("input", atualizarContador);
+
+    $("ia2-novo").addEventListener("click", novaConversa);
+    $("ia2-limpar").addEventListener("click", novaConversa);
+
+    $("ia2-menu").addEventListener("click", () => {
+        lateral.classList.toggle("ia2-aberta");
+    });
+
+    sugestoes.querySelectorAll("[data-pergunta]").forEach(botao => {
+        botao.addEventListener("click", () =>
+            enviarPergunta(botao.dataset.pergunta)
+        );
+    });
+
+    carregar();
+
+    if (conversas.length) {
+        conversaAtual = conversas[0].id;
+        renderizarTudo();
+    } else {
+        novaConversa();
+    }
+
+    atualizarContador();
+    verificarStatus();
+    setInterval(verificarStatus, 60000);
+})();
 </script>
 
 {% endblock %}
