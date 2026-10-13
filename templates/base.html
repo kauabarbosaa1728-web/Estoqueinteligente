@@ -3,7 +3,6 @@
 <html lang="pt-br">
 
 <head>
-
     <!-- ==========================================
          CONFIGURACAO DA PAGINA
     ========================================== -->
@@ -27,124 +26,149 @@
 
     <title>Estoque Inteligente</title>
 
-
-    <!-- ==========================================
-         ESTILO PRINCIPAL
-    ========================================== -->
-
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
-
 </head>
-
 
 <body>
 
-    <!-- ==========================================
-         ESTRUTURA PRINCIPAL
-    ========================================== -->
-
     <div class="layout">
 
-
         <!-- ======================================
-             MENU LATERAL
+             MENU LATERAL PREMIUM
         ====================================== -->
 
         <aside
-            class="sidebar"
+            class="sidebar sidebar-premium"
             id="sidebar"
         >
 
-            <!-- LOGO -->
+            <!-- IDENTIDADE DO SISTEMA -->
 
-            <div class="sidebar-topo">
+            <div class="sidebar-topo sidebar-premium-topo">
 
-                <div class="logo">
-                    📦 Estoque Inteligente
+                <div class="sidebar-premium-marca">
+
+                    <div class="sidebar-premium-logo">
+                        ◈
+                    </div>
+
+                    <div class="sidebar-premium-identidade">
+                        <strong>Estoque</strong>
+                        <strong>Inteligente</strong>
+                    </div>
+
                 </div>
 
-                <p class="subtitulo">
+                <p class="sidebar-premium-subtitulo">
                     Gestão de Telecomunicações
                 </p>
 
             </div>
 
+            <!-- TITULO DA NAVEGACAO -->
 
-            <!-- MENU DE NAVEGACAO -->
+            <div class="sidebar-premium-secao">
+                MENU PRINCIPAL
+            </div>
+
+            <!-- LINKS -->
 
             <nav
-                class="sidebar-nav"
+                class="sidebar-nav sidebar-premium-nav"
                 aria-label="Menu principal"
             >
 
                 <a
                     href="{{ url_for('index') }}"
-                    class="menu-link"
+                    class="menu-link sidebar-premium-link {% if request.endpoint == 'index' and not request.args.get('busca') %}ativo{% endif %}"
+                    data-menu="dashboard"
                 >
-                    <span>📊</span>
-                    Dashboard e Estoque
+                    <span class="sidebar-premium-link-icone">▦</span>
+                    <span class="sidebar-premium-link-texto">
+                        Dashboard e Estoque
+                    </span>
                 </a>
-
 
                 <a
                     href="{{ url_for('index') }}#cadastro"
-                    class="menu-link"
+                    class="menu-link sidebar-premium-link"
+                    data-menu="cadastro"
                 >
-                    <span>➕</span>
-                    Cadastrar Equipamentos
+                    <span class="sidebar-premium-link-icone">✚</span>
+                    <span class="sidebar-premium-link-texto">
+                        Cadastrar Equipamentos
+                    </span>
                 </a>
-
 
                 <a
                     href="{{ url_for('index') }}#estoque"
-                    class="menu-link"
+                    class="menu-link sidebar-premium-link"
+                    data-menu="estoque"
                 >
-                    <span>📦</span>
-                    Estoque Geral
+                    <span class="sidebar-premium-link-icone">▤</span>
+                    <span class="sidebar-premium-link-texto">
+                        Estoque Geral
+                    </span>
                 </a>
-
 
                 <a
                     href="{{ url_for('historico') }}"
-                    class="menu-link"
+                    class="menu-link sidebar-premium-link {% if request.endpoint == 'historico' %}ativo{% endif %}"
+                    data-menu="historico"
                 >
-                    <span>📋</span>
-                    Histórico
+                    <span class="sidebar-premium-link-icone">◷</span>
+                    <span class="sidebar-premium-link-texto">
+                        Histórico
+                    </span>
                 </a>
-
 
                 <a
                     href="{{ url_for('assistente') }}"
-                    class="menu-link"
+                    class="menu-link sidebar-premium-link {% if request.endpoint == 'assistente' %}ativo{% endif %}"
+                    data-menu="assistente"
                 >
-                    <span>🤖</span>
-                    Assistente IA
+                    <span class="sidebar-premium-link-icone">✦</span>
+                    <span class="sidebar-premium-link-texto">
+                        Assistente IA
+                    </span>
+
+                    <span class="sidebar-premium-ia-tag">
+                        IA
+                    </span>
                 </a>
 
             </nav>
 
+            <!-- RODAPE DO MENU -->
 
-            <!-- INFORMACOES DO USUARIO -->
+            <div class="usuario sidebar-premium-usuario">
 
-            <div class="usuario">
+                <div class="sidebar-premium-perfil">
 
-                <div class="usuario-info">
+                    <div
+                        class="sidebar-premium-avatar"
+                        aria-hidden="true"
+                    >
+                        {{ (nome_usuario or 'U')[:1]|upper }}
+                    </div>
 
-                    <p>
-                        👤 {{ nome_usuario }}
-                    </p>
+                    <div class="sidebar-premium-perfil-info">
 
-                    <small>
-                        Usuário conectado
-                    </small>
+                        <strong>
+                            {{ nome_usuario }}
+                        </strong>
+
+                        <span>
+                            <span class="sidebar-premium-online"></span>
+                            Usuário conectado
+                        </span>
+
+                    </div>
 
                 </div>
-
-
-                <!-- SAIR DA CONTA -->
 
                 <form
                     action="{{ url_for('logout') }}"
@@ -152,10 +176,11 @@
                 >
 
                     <button
-                        class="btn-sair"
+                        class="btn-sair sidebar-premium-sair"
                         type="submit"
                     >
-                        🚪 Sair da conta
+                        <span aria-hidden="true">↪</span>
+                        Sair da conta
                     </button>
 
                 </form>
@@ -163,7 +188,6 @@
             </div>
 
         </aside>
-
 
         <!-- ======================================
              AREA PRINCIPAL
@@ -173,11 +197,6 @@
             class="conteudo"
             id="conteudo-principal"
         >
-
-
-            <!-- ==================================
-                 CABECALHO DO SISTEMA
-            ================================== -->
 
             <div class="sistema-topbar">
 
@@ -194,7 +213,6 @@
                         ☰
                     </button>
 
-
                     <div class="sistema-identificacao">
 
                         <strong>
@@ -209,17 +227,15 @@
 
                 </div>
 
-
                 <div class="sistema-topbar-direita">
 
                     <span class="sistema-topbar-usuario">
-                        👤 {{ nome_usuario }}
+                        ◉ {{ nome_usuario }}
                     </span>
 
                 </div>
 
             </div>
-
 
             <!-- ==================================
                  MENSAGENS DO SISTEMA
@@ -252,22 +268,19 @@
 
             {% endwith %}
 
-
             <!-- ==================================
-                 CONTEUDO DE CADA PAGINA
+                 CONTEUDO DAS PAGINAS
             ================================== -->
 
             {% block conteudo %}
             {% endblock %}
 
-
         </main>
 
     </div>
 
-
     <!-- ==========================================
-         JAVASCRIPT DO MENU MOBILE
+         JAVASCRIPT DO MENU
     ========================================== -->
 
     <script>
@@ -317,7 +330,6 @@
                     }
                 );
 
-
                 const links = sidebar.querySelectorAll(
                     ".menu-link"
                 );
@@ -331,7 +343,6 @@
 
                 });
 
-
                 document.addEventListener(
                     "keydown",
                     function (evento) {
@@ -341,6 +352,52 @@
                         }
 
                     }
+                );
+
+                // Destaca a secao correta do dashboard.
+
+                function atualizarMenuAtivo() {
+
+                    const caminho = window.location.pathname;
+                    const hash = window.location.hash;
+
+                    if (caminho !== "/") {
+                        return;
+                    }
+
+                    sidebar.querySelectorAll(
+                        ".sidebar-premium-link"
+                    ).forEach(function (link) {
+
+                        link.classList.remove("ativo");
+
+                    });
+
+                    let menu = "dashboard";
+
+                    if (hash === "#cadastro") {
+                        menu = "cadastro";
+                    }
+
+                    if (hash === "#estoque") {
+                        menu = "estoque";
+                    }
+
+                    const linkAtivo = sidebar.querySelector(
+                        '[data-menu="' + menu + '"]'
+                    );
+
+                    if (linkAtivo) {
+                        linkAtivo.classList.add("ativo");
+                    }
+
+                }
+
+                atualizarMenuAtivo();
+
+                window.addEventListener(
+                    "hashchange",
+                    atualizarMenuAtivo
                 );
 
             }
