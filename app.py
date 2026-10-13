@@ -1,9 +1,9 @@
 
 import os
-import re
 from datetime import datetime, timezone
 from functools import wraps
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 from flask import (
     Flask,
@@ -53,9 +53,35 @@ app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024
 
 db = SQLAlchemy(app)
 
+FUSO_BRASILIA = ZoneInfo("America/Sao_Paulo")
+
 
 def agora():
     return datetime.now(timezone.utc)
+
+
+def converter_data_brasilia(data):
+    """
+    Converte uma data UTC para o horario de Brasilia.
+    Datas antigas sem timezone sao tratadas como UTC.
+    """
+
+    if data is None:
+        return None
+
+    if data.tzinfo is None:
+        data = data.replace(tzinfo=timezone.utc)
+
+    return data.astimezone(FUSO_BRASILIA)
+
+
+def formatar_data_brasilia(data):
+    data_local = converter_data_brasilia(data)
+
+    if data_local is None:
+        return "-"
+
+    return data_local.strftime("%d/%m/%Y %H:%M")
 
 
 # ==========================================
@@ -267,8 +293,10 @@ def login_obrigatorio(funcao):
 
 
 def normalizar_mac(valor):
-    # Aceita identificadores personalizados.
-    # Nao exige formato hexadecimal.
+    """
+    Aceita identificadores personalizados.
+    Nao exige formato hexadecimal.
+    """
 
     if not valor:
         return None
@@ -291,6 +319,229 @@ def identificador(item):
         or item.codigo
         or f"ID-{item.id}"
     )
+
+
+def serializar_equipamento(item):
+    """
+    Prepara os dados do equipamento para
+    a tabela atualizar automaticamente.
+    """
+
+    quantidade = int(item.quantidade or 0)
+
+    quantidade_total = int(
+        item.quantidade_total or 0
+    )
+
+    em_uso = quantidade_total - quantidade
+
+    if quantidade == 0:
+        situacao = "Em uso"
+
+    elif em_uso > 0:
+        situacao = "Saldo parcial"
+
+    else:
+        situacao = "No saldo"
+
+    return {
+        "id": item.id,
+        "tipo": item.tipo,
+        "marca": item.marca or "",
+        "modelo": item.modelo or "",
+        "mac": item.mac,
+        "serial": item.serial,
+        "codigo": item.codigo,
+        "identificador": identificador(item),
+        "unidade": item.unidade or "un",
+        "quantidade": quantidade,
+        "quantidade_total": quantidade_total,
+        "em_uso": em_uso,
+        "situacao": situacao,
+        "chegada": (
+            item.chegada.strftime("%d/%m/%Y")
+            if item.chegada
+            else "-"
+        ),
+        "cadastro": formatar_data_brasilia(
+            item.cadastro
+        ),
+        "cadastrado_por": item.cadastrado_por
+    }
+
+
+def consultar_equipamentos(busca=""):
+    """
+    Consulta os equipamentos utilizando
+    o mesmo filtro do Dashboard original.
+    """
+
+    consulta = Equipamento.query
+
+    if busca:
+        termo = f"%{busca}%"
+
+        consulta = consulta.filter(or_(
+            Equipamento.tipo.ilike(termo),
+            Equipamento.marca.ilike(termo),
+            Equipamento.modelo.ilike(termo),
+            Equipamento.mac.ilike(termo),
+            Equipamento.serial.ilike(termo),
+            Equipamento.codigo.ilike(termo)
+        ))
+
+    return consulta.order_by(
+        Equipamento.id.desc()
+    ).limit(500).all()
+
+
+def consultar_indicadores():
+    """
+    Calcula os indicadores diretamente
+    do banco PostgreSQL.
+    """
+
+    resultado = db.session.query(
+        func.coalesce(
+            func.sum(Equipamento.quantidade_total),
+            0
+        ),
+        func.coalesce(
+            func.sum(Equipamento.quantidade),
+            0
+        ),
+        func.count(Equipamento.id)
+    ).one()
+
+    total = int(resultado[0])
+    saldo = int(resultado[1])
+    produtos = int(resultado[2])
+
+    uso = total - saldo
+
+    percentual_saldo = (
+        round((saldo / total) * 100, 1)
+        if total > 0
+        else 0
+    )
+
+    percentual_uso = (
+        round((uso / total) * 100, 1)
+        if total > 0
+        else 0
+    )
+
+    return {
+        "total": total,
+        "saldo": saldo,
+        "uso": uso,
+        "produtos": produtos,
+        "percentual_saldo": percentual_saldo,
+        "percentual_uso": percentual_uso
+    }
+
+
+def consultar_movimentacoes(limite=6):
+    """
+    Retorna as movimentacoes mais recentes.
+    """
+
+    registros = Historico.query.order_by(
+        Historico.data.desc(),
+        Historico.id.desc()
+    ).limit(limite).all()
+
+    movimentacoes = []
+
+    for registro in registros:
+        data_local = converter_data_brasilia(
+            registro.data
+        )
+
+        movimentacoes.append({
+            "id": registro.id,
+            "equipamento_id": registro.equipamento_id,
+            "identificador": registro.mac,
+            "mac": registro.mac,
+            "acao": registro.acao,
+            "usuario": registro.usuario,
+            "data": (
+                data_local.strftime("%d/%m/%Y %H:%M")
+                if data_local
+                else "-"
+            ),
+            "data_iso": (
+                data_local.isoformat()
+                if data_local
+                else None
+            )
+        })
+
+    return movimentacoes
+
+
+def consultar_calendario(ano, mes):
+    """
+    Conta as movimentacoes de cada dia
+    do mes selecionado no calendario.
+
+    Utiliza o horario de Brasilia.
+    """
+
+    inicio_local = datetime(
+        ano,
+        mes,
+        1,
+        tzinfo=FUSO_BRASILIA
+    )
+
+    if mes == 12:
+        fim_local = datetime(
+            ano + 1,
+            1,
+            1,
+            tzinfo=FUSO_BRASILIA
+        )
+    else:
+        fim_local = datetime(
+            ano,
+            mes + 1,
+            1,
+            tzinfo=FUSO_BRASILIA
+        )
+
+    inicio_utc = inicio_local.astimezone(
+        timezone.utc
+    )
+
+    fim_utc = fim_local.astimezone(
+        timezone.utc
+    )
+
+    registros = Historico.query.filter(
+        Historico.data >= inicio_utc,
+        Historico.data < fim_utc
+    ).with_entities(
+        Historico.data
+    ).all()
+
+    calendario = {}
+
+    for registro in registros:
+        data_local = converter_data_brasilia(
+            registro.data
+        )
+
+        if not data_local:
+            continue
+
+        chave = data_local.strftime("%Y-%m-%d")
+
+        calendario[chave] = (
+            calendario.get(chave, 0) + 1
+        )
+
+    return calendario
 
 
 @app.context_processor
@@ -363,7 +614,7 @@ def logout():
 
 
 # ==========================================
-# DASHBOARD
+# DASHBOARD PRINCIPAL
 # ==========================================
 
 @app.route("/")
@@ -374,49 +625,146 @@ def index():
         "busca", ""
     ).strip()
 
-    consulta = Equipamento.query
+    equipamentos = consultar_equipamentos(
+        busca
+    )
 
-    if busca:
-
-        termo = f"%{busca}%"
-
-        consulta = consulta.filter(or_(
-            Equipamento.tipo.ilike(termo),
-            Equipamento.marca.ilike(termo),
-            Equipamento.modelo.ilike(termo),
-            Equipamento.mac.ilike(termo),
-            Equipamento.serial.ilike(termo),
-            Equipamento.codigo.ilike(termo)
-        ))
-
-    equipamentos = consulta.order_by(
-        Equipamento.id.desc()
-    ).limit(500).all()
-
-    total = db.session.query(
-        func.coalesce(
-            func.sum(Equipamento.quantidade_total),
-            0
-        )
-    ).scalar()
-
-    saldo = db.session.query(
-        func.coalesce(
-            func.sum(Equipamento.quantidade),
-            0
-        )
-    ).scalar()
-
-    uso = total - saldo
+    indicadores = consultar_indicadores()
 
     return render_template(
         "index.html",
         equipamentos=equipamentos,
-        total=total,
-        saldo=saldo,
-        uso=uso,
+        total=indicadores["total"],
+        saldo=indicadores["saldo"],
+        uso=indicadores["uso"],
         busca=busca
     )
+
+
+# ==========================================
+# DASHBOARD INTELIGENTE AO VIVO
+# ==========================================
+
+@app.route("/api/dashboard")
+@login_obrigatorio
+def api_dashboard():
+    """
+    API utilizada pelo JavaScript para
+    atualizar os indicadores automaticamente.
+    """
+
+    indicadores = consultar_indicadores()
+
+    agora_local = datetime.now(
+        FUSO_BRASILIA
+    )
+
+    movimentacoes = consultar_movimentacoes(
+        limite=6
+    )
+
+    return jsonify({
+        **indicadores,
+        "data_atual": agora_local.strftime(
+            "%d/%m/%Y"
+        ),
+        "hora_atual": agora_local.strftime(
+            "%H:%M:%S"
+        ),
+        "atualizado_em": agora_local.isoformat(),
+        "movimentacoes": movimentacoes
+    })
+
+
+# ==========================================
+# API DA TABELA DE ESTOQUE
+# ==========================================
+
+@app.route("/api/estoque")
+@login_obrigatorio
+def api_estoque():
+    """
+    Permite atualizar a tabela do estoque
+    sem recarregar a pagina inteira.
+    """
+
+    busca = request.args.get(
+        "busca", ""
+    ).strip()[:120]
+
+    equipamentos = consultar_equipamentos(
+        busca
+    )
+
+    itens = [
+        serializar_equipamento(item)
+        for item in equipamentos
+    ]
+
+    return jsonify({
+        "itens": itens,
+        "quantidade_registros": len(itens),
+        "atualizado_em": datetime.now(
+            FUSO_BRASILIA
+        ).isoformat()
+    })
+
+
+# ==========================================
+# API DO CALENDARIO INTELIGENTE
+# ==========================================
+
+@app.route("/api/calendario")
+@login_obrigatorio
+def api_calendario():
+    """
+    Retorna a quantidade de movimentacoes
+    em cada dia do mes selecionado.
+    """
+
+    agora_local = datetime.now(
+        FUSO_BRASILIA
+    )
+
+    try:
+        ano = int(request.args.get(
+            "ano",
+            agora_local.year
+        ))
+
+        mes = int(request.args.get(
+            "mes",
+            agora_local.month
+        ))
+
+    except (ValueError, TypeError):
+        return jsonify({
+            "erro": "Ano ou mes invalido."
+        }), 400
+
+    if not (2000 <= ano <= 2100):
+        return jsonify({
+            "erro": "Ano invalido."
+        }), 400
+
+    if not (1 <= mes <= 12):
+        return jsonify({
+            "erro": "Mes invalido."
+        }), 400
+
+    calendario = consultar_calendario(
+        ano,
+        mes
+    )
+
+    return jsonify({
+        "ano": ano,
+        "mes": mes,
+        "movimentacoes_por_dia": calendario,
+        "total_movimentacoes": sum(
+            calendario.values()
+        )
+    })
 
 
 # ==========================================
@@ -462,6 +810,18 @@ def cadastrar():
         )
         return redirect(url_for("index"))
 
+    if (
+        len(tipo) > 100
+        or len(marca) > 100
+        or len(modelo) > 100
+        or len(codigo) > 120
+    ):
+        flash(
+            "Um dos campos ultrapassou o tamanho permitido.",
+            "erro"
+        )
+        return redirect(url_for("index"))
+
     try:
         chegada = datetime.strptime(
             request.form.get("chegada", ""),
@@ -476,7 +836,10 @@ def cadastrar():
         return redirect(url_for("index"))
 
     if modo not in ("material", "mac", "serial"):
-        flash("Tipo de cadastro invalido.", "erro")
+        flash(
+            "Tipo de cadastro invalido.",
+            "erro"
+        )
         return redirect(url_for("index"))
 
     try:
@@ -494,6 +857,20 @@ def cadastrar():
             if quantidade < 1 or quantidade > 1000000:
                 flash(
                     "Quantidade invalida.",
+                    "erro"
+                )
+                return redirect(url_for("index"))
+
+            if unidade not in (
+                "un",
+                "m",
+                "kg",
+                "cx",
+                "pct",
+                "rolo"
+            ):
+                flash(
+                    "Unidade de medida invalida.",
                     "erro"
                 )
                 return redirect(url_for("index"))
@@ -695,20 +1072,24 @@ def alterar_status(id):
 
         if produto is None:
             db.session.rollback()
+
             flash(
                 "Produto nao encontrado.",
                 "erro"
             )
+
             return redirect(url_for("index"))
 
         if acao == "retirar":
 
             if quantidade > produto.quantidade:
                 db.session.rollback()
+
                 flash(
                     "Saldo insuficiente.",
                     "erro"
                 )
+
                 return redirect(url_for("index"))
 
             produto.quantidade -= quantidade
@@ -727,10 +1108,12 @@ def alterar_status(id):
 
             if quantidade > em_uso:
                 db.session.rollback()
+
                 flash(
                     "Quantidade maior que o total em uso.",
                     "erro"
                 )
+
                 return redirect(url_for("index"))
 
             produto.quantidade += quantidade
