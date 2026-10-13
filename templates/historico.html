@@ -2,42 +2,1377 @@
 {% extends "base.html" %}
 {% block conteudo %}
 
-<div class="cabecalho">
-    <div>
-        <h1>Histórico de movimentações</h1>
-        <p>Acompanhe as alterações realizadas no estoque.</p>
+<style>
+/* ==========================================
+   HISTORICO PREMIUM - ESTOQUE INTELIGENTE
+   ========================================== */
+
+.historico-premium {
+    --hp-azul: #2563eb;
+    --hp-azul-claro: #eff6ff;
+    --hp-verde: #059669;
+    --hp-verde-claro: #ecfdf5;
+    --hp-laranja: #d97706;
+    --hp-laranja-claro: #fffbeb;
+    --hp-roxo: #7c3aed;
+    --hp-texto: #0f172a;
+    --hp-muted: #64748b;
+    --hp-borda: #e2e8f0;
+    --hp-fundo: #f8fafc;
+
+    color: var(--hp-texto);
+    width: 100%;
+}
+
+.historico-premium * {
+    box-sizing: border-box;
+}
+
+.hp-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+}
+
+.hp-etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: var(--hp-azul-claro);
+    color: var(--hp-azul);
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 13px;
+}
+
+.hp-titulo {
+    font-size: clamp(25px, 3vw, 35px);
+    font-weight: 850;
+    letter-spacing: -1px;
+    margin: 0 0 9px;
+    color: var(--hp-texto);
+}
+
+.hp-descricao {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--hp-muted);
+    margin: 0;
+}
+
+.hp-topo-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.hp-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--hp-borda);
+    background: white;
+    color: var(--hp-texto);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    text-decoration: none;
+    transition: .2s;
+    font-family: inherit;
+}
+
+.hp-btn:hover {
+    transform: translateY(-1px);
+    border-color: #94a3b8;
+    background: #f8fafc;
+}
+
+.hp-btn-principal {
+    background: var(--hp-azul);
+    border-color: var(--hp-azul);
+    color: white;
+}
+
+.hp-btn-principal:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    color: white;
+}
+
+.hp-resumo {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.hp-card {
+    background: white;
+    border: 1px solid var(--hp-borda);
+    border-radius: 18px;
+    padding: 20px;
+    min-width: 0;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, .025);
+}
+
+.hp-card-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.hp-card-label {
+    color: var(--hp-muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.hp-card-icone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 39px;
+    height: 39px;
+    border-radius: 12px;
+    font-size: 19px;
+}
+
+.hp-icone-azul {
+    background: var(--hp-azul-claro);
+    color: var(--hp-azul);
+}
+
+.hp-icone-laranja {
+    background: var(--hp-laranja-claro);
+    color: var(--hp-laranja);
+}
+
+.hp-icone-verde {
+    background: var(--hp-verde-claro);
+    color: var(--hp-verde);
+}
+
+.hp-icone-roxo {
+    background: #f5f3ff;
+    color: var(--hp-roxo);
+}
+
+.hp-card-valor {
+    display: block;
+    font-size: 32px;
+    font-weight: 850;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 7px;
+}
+
+.hp-card-legenda {
+    color: var(--hp-muted);
+    font-size: 12px;
+}
+
+.hp-painel {
+    background: white;
+    border: 1px solid var(--hp-borda);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 10px 35px rgba(15, 23, 42, .035);
+}
+
+.hp-painel-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 23px;
+}
+
+.hp-painel-titulo {
+    font-size: 19px;
+    font-weight: 850;
+    margin: 0 0 5px;
+}
+
+.hp-painel-subtitulo {
+    font-size: 13px;
+    color: var(--hp-muted);
+    margin: 0;
+}
+
+.hp-contador {
+    background: var(--hp-fundo);
+    border: 1px solid var(--hp-borda);
+    color: var(--hp-muted);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.hp-filtros {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(160px, 1fr) minmax(160px, 1fr) auto;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.hp-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.hp-campo label {
+    font-size: 12px;
+    font-weight: 750;
+    color: var(--hp-muted);
+}
+
+.hp-input,
+.hp-select {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 0 13px;
+    border: 1px solid var(--hp-borda);
+    border-radius: 11px;
+    background: white;
+    color: var(--hp-texto);
+    outline: none;
+    font: inherit;
+    font-size: 13px;
+}
+
+.hp-input:focus,
+.hp-select:focus {
+    border-color: var(--hp-azul);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+.hp-filtro-limpar {
+    align-self: end;
+    height: 44px;
+}
+
+.hp-abas {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0 0 20px;
+}
+
+.hp-aba {
+    border: 1px solid var(--hp-borda);
+    border-radius: 999px;
+    padding: 9px 14px;
+    background: white;
+    color: var(--hp-muted);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    transition: .2s;
+}
+
+.hp-aba:hover {
+    background: var(--hp-fundo);
+}
+
+.hp-aba.ativo {
+    background: var(--hp-azul);
+    color: white;
+    border-color: var(--hp-azul);
+}
+
+.hp-tabela-scroll {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--hp-borda);
+    border-radius: 15px;
+}
+
+.hp-tabela {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.hp-tabela thead {
+    background: #f8fafc;
+}
+
+.hp-tabela th {
+    padding: 16px;
+    text-align: left;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 1px solid var(--hp-borda);
+    white-space: nowrap;
+}
+
+.hp-tabela td {
+    padding: 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #edf2f7;
+    color: var(--hp-texto);
+}
+
+.hp-tabela tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.hp-tabela tbody tr:hover {
+    background: #f8fafc;
+}
+
+.hp-data-principal {
+    display: block;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.hp-data-secundaria {
+    display: block;
+    margin-top: 5px;
+    color: var(--hp-muted);
+    font-size: 11px;
+}
+
+.hp-identificador {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hp-mac {
+    display: inline-block;
+    padding: 8px 10px;
+    background: #f1f5f9;
+    color: #334155;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 750;
+    font-family: Consolas, monospace;
+    overflow-wrap: anywhere;
+}
+
+.hp-copiar {
+    width: 29px;
+    height: 29px;
+    border: 1px solid var(--hp-borda);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.hp-copiar:hover {
+    background: var(--hp-azul-claro);
+}
+
+.hp-operacao {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border-radius: 999px;
+    padding: 7px 10px;
+    font-size: 11px;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+.hp-operacao.retirada {
+    background: var(--hp-laranja-claro);
+    color: var(--hp-laranja);
+}
+
+.hp-operacao.devolucao {
+    background: var(--hp-verde-claro);
+    color: var(--hp-verde);
+}
+
+.hp-operacao.cadastro {
+    background: var(--hp-azul-claro);
+    color: var(--hp-azul);
+}
+
+.hp-operacao.outro {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.hp-detalhe {
+    display: block;
+    margin-top: 7px;
+    color: var(--hp-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.hp-usuario {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.hp-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #ede9fe;
+    color: #6d28d9;
+    font-weight: 850;
+    font-size: 12px;
+}
+
+.hp-usuario-nome {
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+.hp-id {
+    color: var(--hp-muted);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.hp-rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 19px;
+    font-size: 12px;
+    color: var(--hp-muted);
+}
+
+.hp-vazio {
+    padding: 55px 20px;
+    text-align: center;
+    color: var(--hp-muted);
+}
+
+.hp-vazio-icone {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+
+.hp-vazio h3 {
+    margin: 0 0 8px;
+    color: var(--hp-texto);
+    font-size: 17px;
+}
+
+.hp-vazio p {
+    margin: 0;
+    font-size: 13px;
+}
+
+.hp-notificacao {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    background: #0f172a;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+    font-size: 13px;
+}
+
+.hp-notificacao[hidden],
+.hp-vazio[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 1100px) {
+    .hp-filtros {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .hp-resumo {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hp-painel {
+        padding: 16px;
+    }
+
+    .hp-filtros {
+        grid-template-columns: 1fr;
+    }
+
+    .hp-card {
+        padding: 15px;
+    }
+
+    .hp-card-valor {
+        font-size: 27px;
+    }
+
+    .hp-topo-acoes,
+    .hp-topo-acoes .hp-btn {
+        width: 100%;
+    }
+
+    .hp-filtro-limpar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 400px) {
+    .hp-resumo {
+        gap: 9px;
+    }
+
+    .hp-card-label {
+        font-size: 11px;
+    }
+
+    .hp-card-icone {
+        width: 32px;
+        height: 32px;
+    }
+}
+</style>
+
+
+<div class="historico-premium" id="historico-premium">
+
+    <!-- CABECALHO -->
+
+    <div class="hp-topo">
+        <div>
+            <div class="hp-etiqueta">
+                ● CONTROLE E RASTREABILIDADE
+            </div>
+
+            <h1 class="hp-titulo">
+                Histórico de movimentações
+            </h1>
+
+            <p class="hp-descricao">
+                Consulte todas as operações registradas,
+                acompanhe entradas e saídas e identifique
+                quem realizou cada movimentação.
+            </p>
+        </div>
+
+        <div class="hp-topo-acoes">
+            <a href="{{ url_for('index') }}" class="hp-btn">
+                ← Voltar ao painel
+            </a>
+
+            <button
+                type="button"
+                class="hp-btn hp-btn-principal"
+                id="hp-exportar"
+            >
+                ↓ Exportar CSV
+            </button>
+        </div>
     </div>
+
+
+    <!-- INDICADORES -->
+
+    <div class="hp-resumo">
+
+        <div class="hp-card">
+            <div class="hp-card-topo">
+                <span class="hp-card-label">
+                    Total de registros
+                </span>
+                <span class="hp-card-icone hp-icone-azul">
+                    ▤
+                </span>
+            </div>
+
+            <strong class="hp-card-valor" id="hp-total">
+                0
+            </strong>
+
+            <span class="hp-card-legenda">
+                Movimentações carregadas
+            </span>
+        </div>
+
+        <div class="hp-card">
+            <div class="hp-card-topo">
+                <span class="hp-card-label">
+                    Retiradas
+                </span>
+                <span class="hp-card-icone hp-icone-laranja">
+                    ↗
+                </span>
+            </div>
+
+            <strong class="hp-card-valor" id="hp-retiradas">
+                0
+            </strong>
+
+            <span class="hp-card-legenda">
+                Saídas do estoque
+            </span>
+        </div>
+
+        <div class="hp-card">
+            <div class="hp-card-topo">
+                <span class="hp-card-label">
+                    Devoluções
+                </span>
+                <span class="hp-card-icone hp-icone-verde">
+                    ↙
+                </span>
+            </div>
+
+            <strong class="hp-card-valor" id="hp-devolucoes">
+                0
+            </strong>
+
+            <span class="hp-card-legenda">
+                Retornos ao estoque
+            </span>
+        </div>
+
+        <div class="hp-card">
+            <div class="hp-card-topo">
+                <span class="hp-card-label">
+                    Cadastros
+                </span>
+                <span class="hp-card-icone hp-icone-roxo">
+                    +
+                </span>
+            </div>
+
+            <strong class="hp-card-valor" id="hp-cadastros">
+                0
+            </strong>
+
+            <span class="hp-card-legenda">
+                Novos registros cadastrados
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- PAINEL DE CONSULTA -->
+
+    <section class="hp-painel">
+
+        <div class="hp-painel-topo">
+            <div>
+                <h2 class="hp-painel-titulo">
+                    Registro de atividades
+                </h2>
+
+                <p class="hp-painel-subtitulo">
+                    Pesquise, filtre e acompanhe o histórico
+                    de operações do estoque.
+                </p>
+            </div>
+
+            <span class="hp-contador" id="hp-contador">
+                0 resultados
+            </span>
+        </div>
+
+
+        <!-- FILTROS -->
+
+        <div class="hp-filtros">
+
+            <div class="hp-campo">
+                <label for="hp-busca">
+                    Buscar movimentação
+                </label>
+
+                <input
+                    type="search"
+                    id="hp-busca"
+                    class="hp-input"
+                    placeholder="MAC, funcionário ou operação..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="hp-campo">
+                <label for="hp-periodo">
+                    Período
+                </label>
+
+                <select id="hp-periodo" class="hp-select">
+                    <option value="todos">
+                        Todo o período carregado
+                    </option>
+                    <option value="hoje">
+                        Hoje
+                    </option>
+                    <option value="7">
+                        Últimos 7 dias
+                    </option>
+                    <option value="30">
+                        Últimos 30 dias
+                    </option>
+                    <option value="90">
+                        Últimos 90 dias
+                    </option>
+                </select>
+            </div>
+
+            <div class="hp-campo">
+                <label for="hp-funcionario">
+                    Funcionário
+                </label>
+
+                <select id="hp-funcionario" class="hp-select">
+                    <option value="todos">
+                        Todos os funcionários
+                    </option>
+
+                    {% for nome in registros | map(attribute='usuario') | unique | sort %}
+                    <option value="{{ nome }}">
+                        {{ nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button
+                type="button"
+                class="hp-btn hp-filtro-limpar"
+                id="hp-limpar"
+            >
+                Limpar filtros
+            </button>
+
+        </div>
+
+
+        <!-- ABAS -->
+
+        <div class="hp-abas" id="hp-abas">
+            <button
+                type="button"
+                class="hp-aba ativo"
+                data-tipo="todos"
+            >
+                Todas
+            </button>
+
+            <button
+                type="button"
+                class="hp-aba"
+                data-tipo="retirada"
+            >
+                ↗ Retiradas
+            </button>
+
+            <button
+                type="button"
+                class="hp-aba"
+                data-tipo="devolucao"
+            >
+                ↙ Devoluções
+            </button>
+
+            <button
+                type="button"
+                class="hp-aba"
+                data-tipo="cadastro"
+            >
+                + Cadastros
+            </button>
+
+            <button
+                type="button"
+                class="hp-aba"
+                data-tipo="outro"
+            >
+                Outros
+            </button>
+        </div>
+
+
+        <!-- TABELA -->
+
+        <div class="hp-tabela-scroll">
+
+            <table class="hp-tabela" id="hp-tabela">
+                <thead>
+                    <tr>
+                        <th>Data e horário</th>
+                        <th>Identificador</th>
+                        <th>Operação realizada</th>
+                        <th>Responsável</th>
+                        <th>Registro</th>
+                    </tr>
+                </thead>
+
+                <tbody id="hp-corpo">
+
+                    {% for r in registros %}
+
+                    {% set acao_lower = (r.acao or '') | lower %}
+
+                    {% if 'retirada' in acao_lower or 'retirado' in acao_lower %}
+                        {% set tipo = 'retirada' %}
+                    {% elif 'devolu' in acao_lower %}
+                        {% set tipo = 'devolucao' %}
+                    {% elif 'cadastro' in acao_lower or 'cadastrado' in acao_lower %}
+                        {% set tipo = 'cadastro' %}
+                    {% else %}
+                        {% set tipo = 'outro' %}
+                    {% endif %}
+
+                    <tr
+                        class="hp-linha"
+                        data-tipo="{{ tipo }}"
+                        data-usuario="{{ r.usuario }}"
+                        data-acao="{{ r.acao }}"
+                        data-mac="{{ r.mac }}"
+                        data-id="{{ r.id }}"
+                        data-data="{{ r.data.isoformat() if r.data else '' }}"
+                    >
+
+                        <td>
+                            {% if r.data %}
+                            <span class="hp-data-principal">
+                                {{ r.data.strftime('%d/%m/%Y') }}
+                            </span>
+
+                            <span class="hp-data-secundaria">
+                                {{ r.data.strftime('%H:%M') }} UTC
+                            </span>
+                            {% else %}
+                            <span class="hp-data-principal">-</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="hp-identificador">
+                                <code class="hp-mac">
+                                    {{ r.mac }}
+                                </code>
+
+                                <button
+                                    type="button"
+                                    class="hp-copiar"
+                                    data-copiar="{{ r.mac }}"
+                                    title="Copiar identificador"
+                                    aria-label="Copiar identificador"
+                                >
+                                    ⧉
+                                </button>
+                            </div>
+                        </td>
+
+                        <td>
+
+                            {% if tipo == 'retirada' %}
+                            <span class="hp-operacao retirada">
+                                ↗ Retirada
+                            </span>
+
+                            {% elif tipo == 'devolucao' %}
+                            <span class="hp-operacao devolucao">
+                                ↙ Devolução
+                            </span>
+
+                            {% elif tipo == 'cadastro' %}
+                            <span class="hp-operacao cadastro">
+                                + Cadastro
+                            </span>
+
+                            {% else %}
+                            <span class="hp-operacao outro">
+                                • Movimentação
+                            </span>
+                            {% endif %}
+
+                            <span class="hp-detalhe">
+                                {{ r.acao }}
+                            </span>
+
+                        </td>
+
+                        <td>
+                            <div class="hp-usuario">
+                                <span class="hp-avatar">
+                                    {{ (r.usuario or '?')[0] | upper }}
+                                </span>
+
+                                <span class="hp-usuario-nome">
+                                    {{ r.usuario }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="hp-id">
+                                #{{ r.id }}
+                            </span>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+            <div class="hp-vazio" id="hp-vazio" hidden>
+                <div class="hp-vazio-icone">⌕</div>
+
+                <h3>Nenhuma movimentação encontrada</h3>
+
+                <p>
+                    Tente alterar os filtros ou pesquisar
+                    por outro identificador.
+                </p>
+            </div>
+
+        </div>
+
+
+        <!-- RODAPE -->
+
+        <div class="hp-rodape">
+            <span id="hp-resultado-texto">
+                Carregando registros...
+            </span>
+
+            <span>
+                Horários exibidos em Brasília • Histórico de auditoria
+            </span>
+        </div>
+
+    </section>
+
+    <div
+        class="hp-notificacao"
+        id="hp-notificacao"
+        role="status"
+        hidden
+    ></div>
+
 </div>
 
-<section class="painel">
-    <div class="tabela-scroll">
-        <table>
-            <thead>
-                <tr>
-                    <th>Data e hora (UTC)</th>
-                    <th>MAC Address</th>
-                    <th>Movimentação</th>
-                    <th>Funcionário</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in registros %}
-                <tr>
-                    <td>{{ r.data.strftime('%d/%m/%Y %H:%M') }}</td>
-                    <td><code>{{ r.mac }}</code></td>
-                    <td>{{ r.acao }}</td>
-                    <td>{{ r.usuario }}</td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="4" class="vazio">
-                        Nenhuma movimentação registrada.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</section>
+
+<script>
+(function () {
+    "use strict";
+
+    const raiz = document.getElementById("historico-premium");
+
+    if (!raiz) return;
+
+    const busca = document.getElementById("hp-busca");
+    const periodo = document.getElementById("hp-periodo");
+    const funcionario = document.getElementById("hp-funcionario");
+    const limpar = document.getElementById("hp-limpar");
+    const exportar = document.getElementById("hp-exportar");
+    const abas = Array.from(
+        raiz.querySelectorAll(".hp-aba")
+    );
+
+    const linhas = Array.from(
+        raiz.querySelectorAll(".hp-linha")
+    );
+
+    const contador = document.getElementById("hp-contador");
+    const resultadoTexto = document.getElementById(
+        "hp-resultado-texto"
+    );
+
+    const vazio = document.getElementById("hp-vazio");
+    const notificacao = document.getElementById(
+        "hp-notificacao"
+    );
+
+    let filtroTipo = "todos";
+    let linhasVisiveis = [];
+    let avisoTimeout = null;
+
+    const formatadorData = new Intl.DateTimeFormat("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
+
+    const formatadorHora = new Intl.DateTimeFormat("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+    });
+
+    function converterData(valor) {
+        if (!valor) return null;
+
+        // Os registros antigos sem timezone sao tratados
+        // como UTC, assim como no app.py.
+        let texto = String(valor).trim();
+
+        if (!/[zZ]|[+-]\d{2}:\d{2}$/.test(texto)) {
+            texto += "+00:00";
+        }
+
+        const data = new Date(texto);
+
+        return Number.isNaN(data.getTime()) ? null : data;
+    }
+
+    function normalizar(texto) {
+        return String(texto || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+    }
+
+    function dataBrasilia(data) {
+        if (!data) return "";
+
+        return formatadorData.format(data);
+    }
+
+    function horaBrasilia(data) {
+        if (!data) return "";
+
+        return formatadorHora.format(data);
+    }
+
+    function inicioDiaBrasilia(data) {
+        return dataBrasilia(data);
+    }
+
+    function dentroPeriodo(data) {
+        const valor = periodo.value;
+
+        if (valor === "todos") return true;
+        if (!data) return false;
+
+        const agora = new Date();
+
+        if (valor === "hoje") {
+            return (
+                inicioDiaBrasilia(data) ===
+                inicioDiaBrasilia(agora)
+            );
+        }
+
+        const dias = Number(valor);
+
+        if (!Number.isFinite(dias)) return true;
+
+        const limite = new Date(
+            agora.getTime() - dias * 24 * 60 * 60 * 1000
+        );
+
+        return data >= limite && data <= agora;
+    }
+
+    function atualizarDatas() {
+        linhas.forEach(function (linha) {
+            const data = converterData(linha.dataset.data);
+
+            linha._hpData = data;
+
+            if (!data) return;
+
+            const principal = linha.querySelector(
+                ".hp-data-principal"
+            );
+
+            const secundaria = linha.querySelector(
+                ".hp-data-secundaria"
+            );
+
+            if (principal) {
+                principal.textContent = dataBrasilia(data);
+            }
+
+            if (secundaria) {
+                secundaria.textContent = (
+                    horaBrasilia(data) + " · Brasília"
+                );
+            }
+        });
+    }
+
+    function atualizarIndicadores() {
+        const totais = {
+            todos: linhas.length,
+            retirada: 0,
+            devolucao: 0,
+            cadastro: 0
+        };
+
+        linhas.forEach(function (linha) {
+            const tipo = linha.dataset.tipo;
+
+            if (Object.prototype.hasOwnProperty.call(totais, tipo)) {
+                totais[tipo]++;
+            }
+        });
+
+        document.getElementById("hp-total").textContent =
+            totais.todos.toLocaleString("pt-BR");
+
+        document.getElementById("hp-retiradas").textContent =
+            totais.retirada.toLocaleString("pt-BR");
+
+        document.getElementById("hp-devolucoes").textContent =
+            totais.devolucao.toLocaleString("pt-BR");
+
+        document.getElementById("hp-cadastros").textContent =
+            totais.cadastro.toLocaleString("pt-BR");
+    }
+
+    function filtrar() {
+        const termo = normalizar(busca.value);
+        const usuarioSelecionado = funcionario.value;
+
+        linhasVisiveis = [];
+
+        linhas.forEach(function (linha) {
+            const tipo = linha.dataset.tipo;
+
+            const correspondeTipo = (
+                filtroTipo === "todos" ||
+                filtroTipo === tipo
+            );
+
+            const correspondeFuncionario = (
+                usuarioSelecionado === "todos" ||
+                linha.dataset.usuario === usuarioSelecionado
+            );
+
+            const conteudo = normalizar([
+                linha.dataset.mac,
+                linha.dataset.acao,
+                linha.dataset.usuario,
+                linha.dataset.id,
+                linha.textContent
+            ].join(" "));
+
+            const correspondeBusca = (
+                !termo || conteudo.includes(termo)
+            );
+
+            const correspondePeriodo = dentroPeriodo(
+                linha._hpData
+            );
+
+            const mostrar = (
+                correspondeTipo &&
+                correspondeFuncionario &&
+                correspondeBusca &&
+                correspondePeriodo
+            );
+
+            linha.hidden = !mostrar;
+            linha.style.display = mostrar ? "" : "none";
+
+            if (mostrar) {
+                linhasVisiveis.push(linha);
+            }
+        });
+
+        const quantidade = linhasVisiveis.length;
+
+        contador.textContent = (
+            quantidade.toLocaleString("pt-BR") +
+            (quantidade === 1 ? " resultado" : " resultados")
+        );
+
+        resultadoTexto.textContent = (
+            "Exibindo " +
+            quantidade.toLocaleString("pt-BR") +
+            " de " +
+            linhas.length.toLocaleString("pt-BR") +
+            " registros carregados"
+        );
+
+        vazio.hidden = quantidade !== 0;
+
+        const tabela = document.getElementById("hp-tabela");
+        tabela.hidden = quantidade === 0;
+    }
+
+    function mostrarAviso(mensagem) {
+        notificacao.textContent = mensagem;
+        notificacao.hidden = false;
+
+        if (avisoTimeout) {
+            clearTimeout(avisoTimeout);
+        }
+
+        avisoTimeout = setTimeout(function () {
+            notificacao.hidden = true;
+        }, 2600);
+    }
+
+    function escaparCSV(valor) {
+        const texto = String(valor ?? "");
+
+        // Impede que valores iniciados por operadores
+        // sejam executados como formulas em planilhas.
+        const seguro = /^[=+\-@\t\r]/.test(texto)
+            ? "'" + texto
+            : texto;
+
+        return '"' + seguro.replace(/"/g, '""') + '"';
+    }
+
+    function exportarCSV() {
+        if (!linhasVisiveis.length) {
+            mostrarAviso("Nenhum registro para exportar.");
+            return;
+        }
+
+        const linhasCSV = [[
+            "Registro",
+            "Data",
+            "Horario de Brasilia",
+            "Identificador",
+            "Tipo",
+            "Movimentacao",
+            "Funcionario"
+        ]];
+
+        linhasVisiveis.forEach(function (linha) {
+            linhasCSV.push([
+                linha.dataset.id,
+                dataBrasilia(linha._hpData),
+                horaBrasilia(linha._hpData),
+                linha.dataset.mac,
+                linha.dataset.tipo,
+                linha.dataset.acao,
+                linha.dataset.usuario
+            ]);
+        });
+
+        const conteudo = linhasCSV.map(function (campos) {
+            return campos.map(escaparCSV).join(";");
+        }).join("\r\n");
+
+        const arquivo = new Blob(
+            ["\uFEFF" + conteudo],
+            { type: "text/csv;charset=utf-8;" }
+        );
+
+        const url = URL.createObjectURL(arquivo);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = (
+            "historico_estoque_" +
+            new Date().toISOString().slice(0, 10) +
+            ".csv"
+        );
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(function () {
+            URL.revokeObjectURL(url);
+        }, 1000);
+
+        mostrarAviso("CSV exportado com sucesso!");
+    }
+
+    async function copiarIdentificador(valor) {
+        try {
+            await navigator.clipboard.writeText(valor);
+            mostrarAviso("Identificador copiado!");
+        } catch (erro) {
+            mostrarAviso(
+                "Não foi possível copiar automaticamente."
+            );
+        }
+    }
+
+    abas.forEach(function (aba) {
+        aba.addEventListener("click", function () {
+            filtroTipo = aba.dataset.tipo;
+
+            abas.forEach(function (item) {
+                item.classList.toggle(
+                    "ativo",
+                    item === aba
+                );
+            });
+
+            filtrar();
+        });
+    });
+
+    busca.addEventListener("input", filtrar);
+    periodo.addEventListener("change", filtrar);
+    funcionario.addEventListener("change", filtrar);
+
+    limpar.addEventListener("click", function () {
+        busca.value = "";
+        periodo.value = "todos";
+        funcionario.value = "todos";
+        filtroTipo = "todos";
+
+        abas.forEach(function (aba) {
+            aba.classList.toggle(
+                "ativo",
+                aba.dataset.tipo === "todos"
+            );
+        });
+
+        filtrar();
+    });
+
+    exportar.addEventListener("click", exportarCSV);
+
+    raiz.addEventListener("click", function (evento) {
+        const botao = evento.target.closest(
+            "[data-copiar]"
+        );
+
+        if (!botao) return;
+
+        copiarIdentificador(botao.dataset.copiar);
+    });
+
+    atualizarDatas();
+    atualizarIndicadores();
+    filtrar();
+
+})();
+</script>
 
 {% endblock %}
