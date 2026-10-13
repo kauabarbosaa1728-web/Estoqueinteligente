@@ -1,45 +1,353 @@
 
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estoque Inteligente</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <div class="layout">
-        <aside class="sidebar">
-            <div class="logo">📦 Estoque Inteligente</div>
-            <p class="subtitulo">Gestão de Telecomunicações</p>
 
-            <nav>
-                <a href="{{ url_for('index') }}">📊 Dashboard e Estoque</a>
-                <a href="{{ url_for('index') }}#cadastro">➕ Cadastrar Equipamentos</a>
-                <a href="{{ url_for('historico') }}">📋 Histórico</a>
-                
-<a href="{{ url_for('assistente') }}">🤖 Assistente IA</a>
+<head>
+
+    <!-- ==========================================
+         CONFIGURACAO DA PAGINA
+    ========================================== -->
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f172a"
+    >
+
+    <meta
+        name="description"
+        content="Estoque Inteligente - Sistema de controle de produtos, materiais e equipamentos."
+    >
+
+    <title>Estoque Inteligente</title>
+
+
+    <!-- ==========================================
+         ESTILO PRINCIPAL
+    ========================================== -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- ==========================================
+         ESTRUTURA PRINCIPAL
+    ========================================== -->
+
+    <div class="layout">
+
+
+        <!-- ======================================
+             MENU LATERAL
+        ====================================== -->
+
+        <aside
+            class="sidebar"
+            id="sidebar"
+        >
+
+            <!-- LOGO -->
+
+            <div class="sidebar-topo">
+
+                <div class="logo">
+                    📦 Estoque Inteligente
+                </div>
+
+                <p class="subtitulo">
+                    Gestão de Telecomunicações
+                </p>
+
+            </div>
+
+
+            <!-- MENU DE NAVEGACAO -->
+
+            <nav
+                class="sidebar-nav"
+                aria-label="Menu principal"
+            >
+
+                <a
+                    href="{{ url_for('index') }}"
+                    class="menu-link"
+                >
+                    <span>📊</span>
+                    Dashboard e Estoque
+                </a>
+
+
+                <a
+                    href="{{ url_for('index') }}#cadastro"
+                    class="menu-link"
+                >
+                    <span>➕</span>
+                    Cadastrar Equipamentos
+                </a>
+
+
+                <a
+                    href="{{ url_for('index') }}#estoque"
+                    class="menu-link"
+                >
+                    <span>📦</span>
+                    Estoque Geral
+                </a>
+
+
+                <a
+                    href="{{ url_for('historico') }}"
+                    class="menu-link"
+                >
+                    <span>📋</span>
+                    Histórico
+                </a>
+
+
+                <a
+                    href="{{ url_for('assistente') }}"
+                    class="menu-link"
+                >
+                    <span>🤖</span>
+                    Assistente IA
+                </a>
 
             </nav>
 
+
+            <!-- INFORMACOES DO USUARIO -->
+
             <div class="usuario">
-                <p>👤 {{ nome_usuario }}</p>
-                <form action="{{ url_for('logout') }}" method="POST">
-                    <button class="btn-sair">Sair da conta</button>
+
+                <div class="usuario-info">
+
+                    <p>
+                        👤 {{ nome_usuario }}
+                    </p>
+
+                    <small>
+                        Usuário conectado
+                    </small>
+
+                </div>
+
+
+                <!-- SAIR DA CONTA -->
+
+                <form
+                    action="{{ url_for('logout') }}"
+                    method="POST"
+                >
+
+                    <button
+                        class="btn-sair"
+                        type="submit"
+                    >
+                        🚪 Sair da conta
+                    </button>
+
                 </form>
+
             </div>
+
         </aside>
 
-        <main class="conteudo">
+
+        <!-- ======================================
+             AREA PRINCIPAL
+        ====================================== -->
+
+        <main
+            class="conteudo"
+            id="conteudo-principal"
+        >
+
+
+            <!-- ==================================
+                 CABECALHO DO SISTEMA
+            ================================== -->
+
+            <div class="sistema-topbar">
+
+                <div class="sistema-topbar-esquerda">
+
+                    <button
+                        type="button"
+                        class="menu-mobile-btn"
+                        id="menu-mobile-btn"
+                        aria-label="Abrir ou fechar menu"
+                        aria-expanded="false"
+                        aria-controls="sidebar"
+                    >
+                        ☰
+                    </button>
+
+
+                    <div class="sistema-identificacao">
+
+                        <strong>
+                            Estoque Inteligente
+                        </strong>
+
+                        <span>
+                            Painel de gerenciamento
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="sistema-topbar-direita">
+
+                    <span class="sistema-topbar-usuario">
+                        👤 {{ nome_usuario }}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================
+                 MENSAGENS DO SISTEMA
+            ================================== -->
+
             {% with mensagens = get_flashed_messages(with_categories=true) %}
-                {% for categoria, mensagem in mensagens %}
-                    <div class="alerta {{ categoria }}">{{ mensagem }}</div>
-                {% endfor %}
+
+                {% if mensagens %}
+
+                    <div
+                        class="area-alertas"
+                        aria-live="polite"
+                    >
+
+                        {% for categoria, mensagem in mensagens %}
+
+                            <div class="alerta {{ categoria }}">
+
+                                <span class="alerta-mensagem">
+                                    {{ mensagem }}
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
             {% endwith %}
 
-            {% block conteudo %}{% endblock %}
+
+            <!-- ==================================
+                 CONTEUDO DE CADA PAGINA
+            ================================== -->
+
+            {% block conteudo %}
+            {% endblock %}
+
+
         </main>
+
     </div>
+
+
+    <!-- ==========================================
+         JAVASCRIPT DO MENU MOBILE
+    ========================================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const botaoMenu = document.getElementById(
+                    "menu-mobile-btn"
+                );
+
+                const sidebar = document.getElementById(
+                    "sidebar"
+                );
+
+                if (!botaoMenu || !sidebar) {
+                    return;
+                }
+
+                function fecharMenu() {
+
+                    sidebar.classList.remove(
+                        "sidebar-aberta"
+                    );
+
+                    botaoMenu.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                }
+
+                botaoMenu.addEventListener(
+                    "click",
+                    function () {
+
+                        const aberto = sidebar.classList.toggle(
+                            "sidebar-aberta"
+                        );
+
+                        botaoMenu.setAttribute(
+                            "aria-expanded",
+                            String(aberto)
+                        );
+
+                    }
+                );
+
+
+                const links = sidebar.querySelectorAll(
+                    ".menu-link"
+                );
+
+                links.forEach(function (link) {
+
+                    link.addEventListener(
+                        "click",
+                        fecharMenu
+                    );
+
+                });
+
+
+                document.addEventListener(
+                    "keydown",
+                    function (evento) {
+
+                        if (evento.key === "Escape") {
+                            fecharMenu();
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    </script>
+
 </body>
+
 </html>
-<a class="desativado">🤖 Assistente IA (em breve)</a>
