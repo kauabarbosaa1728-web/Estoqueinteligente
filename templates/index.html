@@ -1,207 +1,933 @@
 
 {% extends "base.html" %}
+
 {% block conteudo %}
 
-<div class="cabecalho">
-    <div>
-        <h1>Dashboard</h1>
-        <p>Controle inteligente de produtos, materiais e equipamentos.</p>
-    </div>
-    <span>Estoque Inteligente</span>
-</div>
+<!-- ==========================================
+     DASHBOARD INTELIGENTE
+========================================== -->
 
-<div class="cards">
-    <div class="card">
-        <p>📦 Total cadastrado</p>
-        <h2>{{ total }}</h2>
+<section class="dashboard-premium" id="dashboard-vivo">
+
+    <div class="cabecalho dash-topo">
+
+        <div>
+            <span class="dash-etiqueta">
+                CENTRAL DE CONTROLE
+            </span>
+
+            <h1>Dashboard Inteligente</h1>
+
+            <p>
+                Controle inteligente de produtos,
+                materiais e equipamentos.
+            </p>
+        </div>
+
+        <div class="dash-topo-direita">
+
+            <span
+                class="dash-ao-vivo"
+                id="dash-status"
+            >
+                ● Conectando...
+            </span>
+
+            <span
+                class="dash-data-atual"
+                id="dash-data"
+            >
+                Carregando data...
+            </span>
+
+        </div>
+
     </div>
-    <div class="card">
-        <p>🟢 Unidades no saldo</p>
-        <h2 class="verde-texto">{{ saldo }}</h2>
+
+
+    <!-- ======================================
+         INDICADORES PRINCIPAIS
+    ====================================== -->
+
+    <div class="dash-cards">
+
+        <div class="dash-card">
+
+            <div class="dash-card-icone">
+                📦
+            </div>
+
+            <p>Total cadastrado</p>
+
+            <h2 id="dash-total">
+                {{ total }}
+            </h2>
+
+            <span>
+                Unidades registradas no sistema
+            </span>
+
+        </div>
+
+
+        <div class="dash-card dash-card-verde">
+
+            <div class="dash-card-icone">
+                🟢
+            </div>
+
+            <p>Unidades disponíveis</p>
+
+            <h2 id="dash-saldo">
+                {{ saldo }}
+            </h2>
+
+            <span>
+                Produtos disponíveis no estoque
+            </span>
+
+        </div>
+
+
+        <div class="dash-card dash-card-vermelho">
+
+            <div class="dash-card-icone">
+                🔴
+            </div>
+
+            <p>Unidades em uso</p>
+
+            <h2 id="dash-uso">
+                {{ uso }}
+            </h2>
+
+            <span>
+                Produtos retirados do estoque
+            </span>
+
+        </div>
+
+
+        <div class="dash-card dash-card-azul">
+
+            <div class="dash-card-icone">
+                🏷️
+            </div>
+
+            <p>Registros cadastrados</p>
+
+            <h2 id="dash-produtos">
+                --
+            </h2>
+
+            <span>
+                Equipamentos e lotes cadastrados
+            </span>
+
+        </div>
+
     </div>
-    <div class="card">
-        <p>🔴 Unidades em uso</p>
-        <h2 class="vermelho-texto">{{ uso }}</h2>
+
+
+    <!-- ======================================
+         GRAFICO E CALENDARIO
+    ====================================== -->
+
+    <div class="dash-grid">
+
+        <!-- GRAFICO -->
+
+        <div class="dash-painel">
+
+            <div class="dash-painel-topo">
+
+                <div>
+                    <h2>📊 Distribuição do estoque</h2>
+
+                    <p>
+                        Comparativo entre produtos
+                        disponíveis e em uso.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="dash-grafico-area">
+
+                <div
+                    class="dash-rosca"
+                    id="dash-rosca"
+                >
+
+                    <div class="dash-rosca-centro">
+
+                        <strong id="dash-percentual">
+                            0%
+                        </strong>
+
+                        <span>
+                            Disponível
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dash-grafico-legenda">
+
+                    <div class="dash-legenda-item">
+
+                        <span class="dash-bolinha-verde">
+                        </span>
+
+                        <span>
+                            No estoque
+                        </span>
+
+                        <strong id="dash-legenda-saldo">
+                            {{ saldo }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="dash-legenda-item">
+
+                        <span class="dash-bolinha-vermelha">
+                        </span>
+
+                        <span>
+                            Em uso
+                        </span>
+
+                        <strong id="dash-legenda-uso">
+                            {{ uso }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CALENDARIO -->
+
+        <div class="dash-painel">
+
+            <div class="dash-painel-topo">
+
+                <div>
+                    <h2>📅 Calendário inteligente</h2>
+
+                    <p>
+                        Acompanhe as movimentações
+                        registradas em cada dia.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="dash-calendario">
+
+                <div class="dash-calendario-topo">
+
+                    <strong id="dash-mes">
+                        Carregando...
+                    </strong>
+
+
+                    <div class="dash-calendario-acoes">
+
+                        <button
+                            type="button"
+                            id="dash-anterior"
+                            aria-label="Mês anterior"
+                        >
+                            ‹
+                        </button>
+
+                        <button
+                            type="button"
+                            id="dash-hoje"
+                        >
+                            Hoje
+                        </button>
+
+                        <button
+                            type="button"
+                            id="dash-proximo"
+                            aria-label="Próximo mês"
+                        >
+                            ›
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="dash-calendario-grid"
+                    id="dash-dias"
+                >
+                </div>
+
+
+                <p
+                    class="dash-calendario-info"
+                    id="dash-cal-info"
+                >
+                    Os dias com movimentações
+                    serão destacados.
+                </p>
+
+            </div>
+
+        </div>
+
     </div>
-</div>
+
+
+    <!-- ======================================
+         ULTIMAS MOVIMENTACOES
+    ====================================== -->
+
+    <div class="dash-painel dash-painel-historico">
+
+        <div class="dash-painel-topo dash-historico-topo">
+
+            <div>
+
+                <h2>
+                    🕒 Últimas movimentações
+                </h2>
+
+                <p>
+                    Acompanhe as atividades
+                    realizadas pelos funcionários.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{{ url_for('historico') }}"
+                class="dash-link-historico"
+            >
+                Ver histórico completo →
+            </a>
+
+        </div>
+
+
+        <div
+            id="dash-movimentacoes"
+            class="dash-lista-movimentacoes"
+        >
+
+            <p>
+                Carregando movimentações...
+            </p>
+
+        </div>
+
+
+        <div class="dash-rodape">
+
+            <span>
+                Atualização automática a cada
+                5 segundos
+            </span>
+
+            <span id="dash-ultima">
+                Aguardando atualização...
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ==========================================
+     CADASTRO UNIVERSAL
+========================================== -->
 
 <section class="painel" id="cadastro">
+
     <h2>➕ Cadastro universal</h2>
-    <p>Cadastre equipamentos por MAC ou serial, ou materiais por quantidade.</p>
 
-    <form action="{{ url_for('cadastrar') }}" method="POST">
+    <p>
+        Cadastre equipamentos por MAC ou serial,
+        ou materiais por quantidade.
+    </p>
 
-        <label>Como deseja cadastrar?</label>
-        <select name="modo" id="modo" onchange="alterarModo()">
-            <option value="mac">Equipamento por MAC</option>
-            <option value="serial">Equipamento por número de série</option>
-            <option value="material">Material ou produto sem MAC</option>
+
+    <form
+        action="{{ url_for('cadastrar') }}"
+        method="POST"
+    >
+
+        <label for="modo">
+            Como deseja cadastrar?
+        </label>
+
+        <select
+            name="modo"
+            id="modo"
+            onchange="alterarModo()"
+        >
+
+            <option value="mac">
+                Equipamento por MAC
+            </option>
+
+            <option value="serial">
+                Equipamento por número de série
+            </option>
+
+            <option value="material">
+                Material ou produto sem MAC
+            </option>
+
         </select>
 
+
         <div class="form-grid">
+
             <div>
-                <label>Nome do equipamento ou material</label>
-                <input name="tipo" placeholder="ONU, cabo, fonte, roteador..." required>
+
+                <label for="tipo">
+                    Nome do equipamento ou material
+                </label>
+
+                <input
+                    id="tipo"
+                    name="tipo"
+                    maxlength="100"
+                    placeholder="ONU, cabo, fonte, roteador..."
+                    required
+                >
+
             </div>
+
+
             <div>
-                <label>Marca (opcional)</label>
-                <input name="marca" placeholder="Huawei, Intelbras...">
+
+                <label for="marca">
+                    Marca (opcional)
+                </label>
+
+                <input
+                    id="marca"
+                    name="marca"
+                    maxlength="100"
+                    placeholder="Huawei, Intelbras..."
+                >
+
             </div>
+
+
             <div>
-                <label>Modelo (opcional)</label>
-                <input name="modelo" placeholder="HG8245H">
+
+                <label for="modelo">
+                    Modelo (opcional)
+                </label>
+
+                <input
+                    id="modelo"
+                    name="modelo"
+                    maxlength="100"
+                    placeholder="HG8245H"
+                >
+
             </div>
+
+
             <div>
-                <label>Data de chegada</label>
-                <input type="date" name="chegada" required>
+
+                <label for="chegada">
+                    Data de chegada
+                </label>
+
+                <input
+                    type="date"
+                    id="chegada"
+                    name="chegada"
+                    required
+                >
+
             </div>
+
         </div>
+
+
+        <!-- CADASTRO POR IDENTIFICADORES -->
 
         <div id="campo-identificadores">
-            <label id="titulo-identificadores">MACs (um por linha)</label>
-            <textarea name="identificadores" id="identificadores"
-                rows="5" placeholder="A4:5E:60:12:AB:CD"></textarea>
-            <p>Você pode cadastrar vários equipamentos de uma vez.</p>
+
+            <label
+                id="titulo-identificadores"
+                for="identificadores"
+            >
+                MACs (um por linha)
+            </label>
+
+
+            <textarea
+                name="identificadores"
+                id="identificadores"
+                rows="5"
+                placeholder="A4:5E:60:12:AB:CD"
+            ></textarea>
+
+
+            <p>
+                Você pode cadastrar vários
+                equipamentos de uma vez.
+                Separe os identificadores por
+                linha ou vírgula.
+            </p>
+
         </div>
 
-        <div id="campo-material" style="display:none;">
+
+        <!-- CADASTRO POR QUANTIDADE -->
+
+        <div
+            id="campo-material"
+            style="display:none;"
+        >
+
             <div class="form-grid">
+
                 <div>
-                    <label>Código interno (opcional)</label>
-                    <input name="codigo" placeholder="MAT-001">
+
+                    <label for="codigo">
+                        Código interno (opcional)
+                    </label>
+
+                    <input
+                        id="codigo"
+                        name="codigo"
+                        maxlength="120"
+                        placeholder="MAT-001"
+                    >
+
                 </div>
+
+
                 <div>
-                    <label>Quantidade</label>
-                    <input type="number" name="quantidade"
-                           min="1" value="1">
+
+                    <label for="quantidade-material">
+                        Quantidade
+                    </label>
+
+                    <input
+                        type="number"
+                        id="quantidade-material"
+                        name="quantidade"
+                        min="1"
+                        max="1000000"
+                        value="1"
+                    >
+
                 </div>
+
+
                 <div>
-                    <label>Unidade de medida</label>
-                    <select name="unidade">
-                        <option value="un">Unidades</option>
-                        <option value="m">Metros</option>
-                        <option value="kg">Quilos</option>
-                        <option value="cx">Caixas</option>
-                        <option value="pct">Pacotes</option>
-                        <option value="rolo">Rolos</option>
+
+                    <label for="unidade">
+                        Unidade de medida
+                    </label>
+
+                    <select
+                        id="unidade"
+                        name="unidade"
+                    >
+
+                        <option value="un">
+                            Unidades
+                        </option>
+
+                        <option value="m">
+                            Metros
+                        </option>
+
+                        <option value="kg">
+                            Quilos
+                        </option>
+
+                        <option value="cx">
+                            Caixas
+                        </option>
+
+                        <option value="pct">
+                            Pacotes
+                        </option>
+
+                        <option value="rolo">
+                            Rolos
+                        </option>
+
                     </select>
+
                 </div>
+
             </div>
+
         </div>
 
-        <button class="btn-principal" type="submit">
+
+        <button
+            class="btn-principal"
+            type="submit"
+        >
             Cadastrar no estoque
         </button>
+
     </form>
+
 </section>
 
-<section class="painel">
+
+<!-- ==========================================
+     ESTOQUE GERAL
+========================================== -->
+
+<section class="painel" id="estoque">
+
     <div class="cabecalho-tabela">
-        <h2>📋 Estoque geral</h2>
-        <form method="GET">
-            <input name="busca" value="{{ busca }}"
-                placeholder="Buscar nome, MAC, serial ou código">
-            <button class="btn-busca">Buscar</button>
+
+        <div>
+
+            <h2>📋 Estoque geral</h2>
+
+            <p>
+                Consulte e movimente os
+                produtos cadastrados.
+            </p>
+
+        </div>
+
+
+        <form
+            method="GET"
+            id="form-busca"
+        >
+
+            <input
+                name="busca"
+                id="busca"
+                value="{{ busca }}"
+                placeholder="Buscar nome, MAC, serial ou código"
+            >
+
+            <button
+                type="submit"
+                class="btn-busca"
+            >
+                Buscar
+            </button>
+
         </form>
+
     </div>
+
+
+    <p class="dash-tabela-info">
+        A tabela consulta automaticamente
+        as alterações do estoque.
+    </p>
+
 
     <div class="tabela-scroll">
-        <table>
+
+        <table id="tabela-estoque">
+
             <thead>
+
                 <tr>
+
                     <th>Produto</th>
+
                     <th>Identificador</th>
+
                     <th>Chegada</th>
+
                     <th>Cadastro</th>
+
                     <th>Responsável</th>
+
                     <th>Saldo</th>
+
                     <th>Em uso</th>
+
                     <th>Situação</th>
+
                     <th>Movimentação</th>
+
                 </tr>
+
             </thead>
 
-            <tbody>
+
+            <tbody id="estoque-corpo">
+
                 {% for e in equipamentos %}
+
                 {% set em_uso = e.quantidade_total - e.quantidade %}
-                <tr class="{{ 'linha-uso' if e.quantidade == 0 else 'linha-saldo' }}">
+
+
+                <tr class="{{
+                    'linha-uso'
+                    if e.quantidade == 0
+                    else 'linha-saldo'
+                }}">
+
                     <td>
-                        <strong>{{ e.tipo }}</strong>
-                        <small>{{ e.marca }} {{ e.modelo }}</small>
+
+                        <strong>
+                            {{ e.tipo }}
+                        </strong>
+
+                        <small>
+                            {{ e.marca }}
+                            {{ e.modelo }}
+                        </small>
+
                     </td>
+
+
                     <td>
+
                         <code>
-                            {{ e.mac or e.serial or e.codigo or ('ID-' ~ e.id) }}
+                            {{
+                                e.mac
+                                or e.serial
+                                or e.codigo
+                                or ('ID-' ~ e.id)
+                            }}
                         </code>
+
                     </td>
-                    <td>{{ e.chegada.strftime('%d/%m/%Y') }}</td>
-                    <td>{{ e.cadastro.strftime('%d/%m/%Y %H:%M') }}</td>
-                    <td>{{ e.cadastrado_por }}</td>
-                    <td class="verde-texto">
-                        <strong>{{ e.quantidade }} {{ e.unidade }}</strong>
-                    </td>
-                    <td class="vermelho-texto">
-                        <strong>{{ em_uso }} {{ e.unidade }}</strong>
-                    </td>
+
+
                     <td>
-                        {% if e.quantidade == 0 %}
-                            <span class="status uso">● Em uso</span>
-                        {% elif em_uso > 0 %}
-                            <span class="status saldo">● Saldo parcial</span>
+
+                        {{
+                            e.chegada.strftime(
+                                '%d/%m/%Y'
+                            )
+                        }}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if e.cadastro %}
+
+                            {{
+                                e.cadastro.strftime(
+                                    '%d/%m/%Y %H:%M'
+                                )
+                            }}
+
                         {% else %}
-                            <span class="status saldo">● No saldo</span>
+
+                            -
+
                         {% endif %}
+
                     </td>
+
+
                     <td>
-                        <form method="POST"
-                              action="{{ url_for('alterar_status', id=e.id) }}"
-                              class="movimentacao">
-                            <input type="number" name="quantidade"
-                                   min="1" value="1" required>
+
+                        {{ e.cadastrado_por }}
+
+                    </td>
+
+
+                    <td class="verde-texto">
+
+                        <strong>
+
+                            {{ e.quantidade }}
+                            {{ e.unidade }}
+
+                        </strong>
+
+                    </td>
+
+
+                    <td class="vermelho-texto">
+
+                        <strong>
+
+                            {{ em_uso }}
+                            {{ e.unidade }}
+
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+
+                        {% if e.quantidade == 0 %}
+
+                            <span class="status uso">
+                                ● Em uso
+                            </span>
+
+                        {% elif em_uso > 0 %}
+
+                            <span class="status saldo">
+                                ● Saldo parcial
+                            </span>
+
+                        {% else %}
+
+                            <span class="status saldo">
+                                ● No saldo
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <form
+                            method="POST"
+                            action="{{
+                                url_for(
+                                    'alterar_status',
+                                    id=e.id
+                                )
+                            }}"
+                            class="movimentacao"
+                        >
+
+                            <input
+                                type="number"
+                                name="quantidade"
+                                min="1"
+                                value="1"
+                                required
+                            >
+
 
                             {% if e.quantidade > 0 %}
-                                <button name="acao" value="retirar"
-                                        class="btn-uso">
+
+                                <button
+                                    type="submit"
+                                    name="acao"
+                                    value="retirar"
+                                    class="btn-uso"
+                                >
                                     Retirar
                                 </button>
+
                             {% endif %}
+
 
                             {% if em_uso > 0 %}
-                                <button name="acao" value="devolver"
-                                        class="btn-saldo">
+
+                                <button
+                                    type="submit"
+                                    name="acao"
+                                    value="devolver"
+                                    class="btn-saldo"
+                                >
                                     Devolver
                                 </button>
+
                             {% endif %}
+
                         </form>
+
                     </td>
+
                 </tr>
+
+
                 {% else %}
+
                 <tr>
-                    <td colspan="9" class="vazio">
+
+                    <td
+                        colspan="9"
+                        class="vazio"
+                    >
                         Nenhum produto encontrado.
                     </td>
+
                 </tr>
+
                 {% endfor %}
+
             </tbody>
+
         </table>
+
     </div>
+
 </section>
 
+
+<!-- ==========================================
+     JAVASCRIPT DO CADASTRO
+========================================== -->
+
 <script>
+
 function alterarModo() {
-    const modo = document.getElementById("modo").value;
-    const campoMaterial = document.getElementById("campo-material");
-    const campoIds = document.getElementById("campo-identificadores");
-    const titulo = document.getElementById("titulo-identificadores");
-    const identificadores = document.getElementById("identificadores");
+
+    const modo = document.getElementById(
+        "modo"
+    ).value;
+
+    const campoMaterial = document.getElementById(
+        "campo-material"
+    );
+
+    const campoIds = document.getElementById(
+        "campo-identificadores"
+    );
+
+    const titulo = document.getElementById(
+        "titulo-identificadores"
+    );
+
+    const identificadores = document.getElementById(
+        "identificadores"
+    );
 
     if (modo === "material") {
+
         campoMaterial.style.display = "block";
+
         campoIds.style.display = "none";
+
         identificadores.required = false;
+
     } else {
+
         campoMaterial.style.display = "none";
+
         campoIds.style.display = "block";
+
         identificadores.required = true;
 
         titulo.textContent = modo === "mac"
@@ -211,10 +937,23 @@ function alterarModo() {
         identificadores.placeholder = modo === "mac"
             ? "A4:5E:60:12:AB:CD"
             : "SN123456789";
+
     }
+
 }
 
 alterarModo();
+
 </script>
+
+
+<!-- ==========================================
+     JAVASCRIPT DO DASHBOARD INTELIGENTE
+========================================== -->
+
+<script
+    src="{{ url_for('static', filename='dashboard.js') }}"
+    defer
+></script>
 
 {% endblock %}
