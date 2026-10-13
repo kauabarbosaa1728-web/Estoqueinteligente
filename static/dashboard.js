@@ -2,6 +2,7 @@
 /* ==========================================
    ESTOQUE INTELIGENTE
    DASHBOARD + ESTOQUE PREMIUM
+   PAGINACAO DE 50 EQUIPAMENTOS
 ========================================== */
 
 "use strict";
@@ -10,6 +11,7 @@
 
     const INTERVALO_ATUALIZACAO = 5000;
     const FUSO = "America/Sao_Paulo";
+    const ITENS_POR_PAGINA = 50;
 
     const MESES = [
         "Janeiro", "Fevereiro", "Março",
@@ -50,8 +52,14 @@
     let carregandoCalendario = false;
     let calendarioVersao = 0;
 
-    let ultimaBuscaSolicitada = null;
+    let paginaAtual = 1;
+    let totalPaginas = 1;
+    let totalRegistros = 0;
+    let buscaAplicada = "";
+
     let estoquePendente = null;
+    let atualizacaoSolicitada = false;
+    let ultimaRequisicaoEstoque = 0;
 
     // ======================================
     // FUNCOES AUXILIARES
@@ -588,15 +596,9 @@
             return false;
         }
 
-        // Se a janela de confirmação estiver
-        // aberta, não substituímos a tabela.
-
         if (modal && !modal.hidden) {
             return true;
         }
-
-        // Não substituir enquanto o funcionário
-        // estiver preenchendo a quantidade.
 
         if (
             document.activeElement &&
@@ -609,22 +611,229 @@
     }
 
     // ======================================
-    // ATUALIZAR TABELA
+    // PAGINACAO DO ESTOQUE
     // ======================================
 
-    function atualizarTabela(itens) {
+    function garantirControlesPaginacao() {
+        let painel = elemento("ep-paginacao");
+
+        if (painel) {
+            return painel;
+        }
+
         const corpo = elemento("estoque-corpo");
 
         if (!corpo) {
+            return null;
+        }
+
+        const tabela = corpo.closest("table");
+
+        if (!tabela) {
+            return null;
+        }
+
+        painel = criarElemento(
+            "div",
+            "ep-paginacao",
+        );
+
+        painel.id = "ep-paginacao";
+
+        painel.style.cssText = [
+            "display:flex",
+            "justify-content:space-between",
+            "align-items:center",
+            "gap:12px",
+            "flex-wrap:wrap",
+            "padding:16px 4px"
+        ].join(";");
+
+        const informacao = criarElemento(
+            "span",
+            "",
+            "Carregando registros..."
+        );
+
+        informacao.id = "ep-paginacao-info";
+
+        const acoes = criarElemento(
+            "div",
+            "ep-paginacao-acoes"
+        );
+
+        acoes.style.cssText = [
+            "display:flex",
+            "align-items:center",
+            "gap:8px",
+            "flex-wrap:wrap"
+        ].join(";");
+
+        const anterior = criarElemento(
+            "button",
+            "ep-paginacao-btn",
+            "← Anterior"
+        );
+
+        anterior.id = "ep-pagina-anterior";
+        anterior.type = "button";
+
+        const numero = criarElemento(
+            "span",
+            "",
+            "Página 1 de 1"
+        );
+
+        numero.id = "ep-paginacao-numero";
+
+        const proxima = criarElemento(
+            "button",
+            "ep-paginacao-btn",
+            "Próxima →"
+        );
+
+        proxima.id = "ep-pagina-proxima";
+        proxima.type = "button";
+
+        [anterior, proxima].forEach(botao => {
+            botao.style.cssText = [
+                "border:1px solid #dbe3ef",
+                "background:white",
+                "border-radius:10px",
+                "padding:10px 14px",
+                "font-weight:700",
+                "cursor:pointer"
+            ].join(";");
+        });
+
+        numero.style.cssText = [
+            "font-size:13px",
+            "font-weight:700",
+            "color:#475569"
+        ].join(";");
+
+        acoes.append(anterior, numero, proxima);
+        painel.append(informacao, acoes);
+
+        const areaTabela = tabela.parentElement;
+
+        if (areaTabela) {
+            areaTabela.insertAdjacentElement(
+                "afterend",
+                painel
+            );
+        }
+
+        return painel;
+    }
+
+    function atualizarControlesPaginacao() {
+        garantirControlesPaginacao();
+
+        const inicio = totalRegistros === 0
+            ? 0
+            : (paginaAtual - 1) * ITENS_POR_PAGINA + 1;
+
+        const fim = Math.min(
+            paginaAtual * ITENS_POR_PAGINA,
+            totalRegistros
+        );
+
+        definirTexto(
+            "ep-paginacao-info",
+            `Exibindo ${formatarNumero(inicio)} a ` +
+            `${formatarNumero(fim)} de ` +
+            `${formatarNumero(totalRegistros)} equipamentos`
+        );
+
+        definirTexto(
+            "ep-paginacao-numero",
+            `Página ${formatarNumero(paginaAtual)} de ` +
+            `${formatarNumero(Math.max(1, totalPaginas))}`
+        );
+
+        const anterior = elemento("ep-pagina-anterior");
+        const proxima = elemento("ep-pagina-proxima");
+
+        if (anterior) {
+            anterior.disabled = paginaAtual <= 1;
+            anterior.style.opacity = anterior.disabled
+                ? "0.45"
+                : "1";
+            anterior.style.cursor = anterior.disabled
+                ? "not-allowed"
+                : "pointer";
+        }
+
+        if (proxima) {
+            proxima.disabled = paginaAtual >= totalPaginas;
+            proxima.style.opacity = proxima.disabled
+                ? "0.45"
+                : "1";
+            proxima.style.cursor = proxima.disabled
+                ? "not-allowed"
+                : "pointer";
+        }
+    }
+
+    function mudarPagina(novaPagina) {
+        const destino = Number(novaPagina);
+
+        if (
+            !Number.isInteger(destino) ||
+            destino < 1 ||
+            destino > Math.max(1, totalPaginas) ||
+            destino === paginaAtual
+        ) {
             return;
         }
 
-        if (!Array.isArray(itens)) {
+        paginaAtual = destino;
+        atualizarControlesPaginacao();
+        solicitarAtualizacao();
+    }
+
+    function configurarPaginacao() {
+        garantirControlesPaginacao();
+
+        document.addEventListener("click", evento => {
+            const anterior = evento.target.closest(
+                "#ep-pagina-anterior"
+            );
+
+            if (anterior) {
+                mudarPagina(paginaAtual - 1);
+                return;
+            }
+
+            const proxima = evento.target.closest(
+                "#ep-pagina-proxima"
+            );
+
+            if (proxima) {
+                mudarPagina(paginaAtual + 1);
+            }
+        });
+
+        atualizarControlesPaginacao();
+    }
+
+    // ======================================
+    // ATUALIZAR TABELA
+    // ======================================
+
+    function atualizarTabela(itens, metadados = {}) {
+        const corpo = elemento("estoque-corpo");
+
+        if (!corpo || !Array.isArray(itens)) {
             return;
         }
 
         if (estoqueEstaSendoEditado()) {
-            estoquePendente = itens;
+            estoquePendente = {
+                itens,
+                metadados
+            };
             return;
         }
 
@@ -656,13 +865,30 @@
 
         corpo.replaceChildren(fragmento);
 
-        // O JavaScript do index.html detecta
-        // a alteração e reaplica os filtros.
+        paginaAtual = Number(
+            metadados.pagina_atual ??
+            metadados.pagina ??
+            paginaAtual
+        ) || 1;
+
+        totalPaginas = Number(
+            metadados.total_paginas
+        ) || 0;
+
+        totalRegistros = Number(
+            metadados.total_registros
+        ) || 0;
+
+        atualizarControlesPaginacao();
 
         document.dispatchEvent(
             new CustomEvent("estoque:atualizado", {
                 detail: {
-                    quantidade: itens.length
+                    quantidade: itens.length,
+                    pagina: paginaAtual,
+                    totalPaginas,
+                    totalRegistros,
+                    busca: buscaAplicada
                 }
             })
         );
@@ -673,7 +899,14 @@
             estoquePendente &&
             !estoqueEstaSendoEditado()
         ) {
-            atualizarTabela(estoquePendente);
+            const pendente = estoquePendente;
+
+            estoquePendente = null;
+
+            atualizarTabela(
+                pendente.itens,
+                pendente.metadados
+            );
         }
     }
 
@@ -917,18 +1150,21 @@
 
                 const campo = elemento("busca");
 
-                const busca = campo
+                buscaAplicada = campo
                     ? campo.value.trim()
                     : "";
+
+                paginaAtual = 1;
+                estoquePendente = null;
 
                 const url = new URL(
                     window.location.href
                 );
 
-                if (busca) {
+                if (buscaAplicada) {
                     url.searchParams.set(
                         "busca",
-                        busca
+                        buscaAplicada
                     );
                 } else {
                     url.searchParams.delete(
@@ -942,7 +1178,7 @@
                     url
                 );
 
-                atualizarDashboard();
+                solicitarAtualizacao();
             }
         );
     }
@@ -951,31 +1187,42 @@
     // ATUALIZACAO GERAL
     // ======================================
 
+    function solicitarAtualizacao() {
+        if (atualizando) {
+            atualizacaoSolicitada = true;
+            return;
+        }
+
+        atualizarDashboard();
+    }
+
     async function atualizarDashboard() {
         if (atualizando || document.hidden) {
             return;
         }
 
         atualizando = true;
+        atualizacaoSolicitada = false;
+
+        const buscaSolicitada = buscaAplicada;
+        const paginaSolicitada = paginaAtual;
+        const versaoSolicitada = ++ultimaRequisicaoEstoque;
 
         try {
-            const campoBusca = elemento("busca");
+            const parametros = new URLSearchParams({
+                pagina: String(paginaSolicitada),
+                por_pagina: String(ITENS_POR_PAGINA)
+            });
 
-            const busca = campoBusca
-                ? campoBusca.value.trim()
-                : "";
-
-            const parametros = new URLSearchParams();
-
-            if (busca) {
-                parametros.set("busca", busca);
+            if (buscaSolicitada) {
+                parametros.set(
+                    "busca",
+                    buscaSolicitada
+                );
             }
 
-            const urlEstoque = parametros.toString()
-                ? "/api/estoque?" + parametros.toString()
-                : "/api/estoque";
-
-            ultimaBuscaSolicitada = busca;
+            const urlEstoque =
+                "/api/estoque?" + parametros.toString();
 
             const [dashboard, estoque] = await Promise.all([
                 buscarJSON("/api/dashboard"),
@@ -988,19 +1235,16 @@
                 dashboard.movimentacoes || []
             );
 
-            // Evita aplicar uma busca antiga
-            // caso o usuário tenha digitado
-            // outro termo durante a consulta.
+            const requisicaoAindaAtual = (
+                versaoSolicitada === ultimaRequisicaoEstoque &&
+                buscaSolicitada === buscaAplicada &&
+                paginaSolicitada === paginaAtual
+            );
 
-            const buscaAtual = campoBusca
-                ? campoBusca.value.trim()
-                : "";
-
-            if (
-                buscaAtual === ultimaBuscaSolicitada
-            ) {
+            if (requisicaoAindaAtual) {
                 atualizarTabela(
-                    estoque.itens || []
+                    estoque.itens || [],
+                    estoque
                 );
             }
 
@@ -1033,6 +1277,11 @@
 
         } finally {
             atualizando = false;
+
+            if (atualizacaoSolicitada && !document.hidden) {
+                atualizacaoSolicitada = false;
+                atualizarDashboard();
+            }
         }
     }
 
@@ -1045,8 +1294,21 @@
             return;
         }
 
+        const campoBusca = elemento("busca");
+
+        const parametrosIniciais = new URLSearchParams(
+            window.location.search
+        );
+
+        buscaAplicada = parametrosIniciais.get("busca") || "";
+
+        if (campoBusca && !campoBusca.value) {
+            campoBusca.value = buscaAplicada;
+        }
+
         configurarCalendario();
         configurarBusca();
+        configurarPaginacao();
 
         definirTexto(
             "dash-data",
@@ -1058,7 +1320,7 @@
         window.setInterval(
             () => {
                 aplicarEstoquePendente();
-                atualizarDashboard();
+                solicitarAtualizacao();
             },
             INTERVALO_ATUALIZACAO
         );
@@ -1068,13 +1330,10 @@
             () => {
                 if (!document.hidden) {
                     aplicarEstoquePendente();
-                    atualizarDashboard();
+                    solicitarAtualizacao();
                 }
             }
         );
-
-        // Atualiza uma tabela pendente assim
-        // que o funcionário sair do campo.
 
         document.addEventListener(
             "focusout",
@@ -1107,3 +1366,5 @@
 
 })();
 
+
+  
