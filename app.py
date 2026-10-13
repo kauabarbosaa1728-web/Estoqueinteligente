@@ -392,7 +392,7 @@ def consultar_equipamentos(busca=""):
 
     return consulta.order_by(
         Equipamento.id.desc()
-    ).limit(500).all()
+    ).limit(2000).all()
 
 
 def consultar_indicadores():
@@ -828,7 +828,7 @@ def cadastrar():
             "%Y-%m-%d"
         ).date()
 
-    except ValueError:
+    except (ValueError, TypeError):
         flash(
             "Data de chegada invalida.",
             "erro"
@@ -851,7 +851,7 @@ def cadastrar():
                         "quantidade", "1"
                     )
                 )
-            except ValueError:
+            except (ValueError, TypeError):
                 quantidade = 0
 
             if quantidade < 1 or quantidade > 1000000:
@@ -1042,14 +1042,14 @@ def alterar_status(id):
                 "quantidade", "1"
             )
         )
-    except ValueError:
+    except (ValueError, TypeError):
         quantidade = 0
 
     acao = request.form.get(
         "acao", "retirar"
     )
 
-    if quantidade < 1:
+    if quantidade < 1 or quantidade > 1000000:
         flash(
             "Quantidade invalida.",
             "erro"
@@ -1250,8 +1250,10 @@ with app.app_context():
 
     migrar_banco()
 
-    admin_nome = os.environ.get(
-        "ADMIN_USER", ""
+    admin_nome = (
+        os.environ.get("ADMIN_USER")
+        or os.environ.get("ADMIN_USERNAME")
+        or ""
     ).strip()
 
     admin_senha = os.environ.get(
