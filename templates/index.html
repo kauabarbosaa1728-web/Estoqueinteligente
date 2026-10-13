@@ -10,7 +10,6 @@
 <section class="dashboard-premium" id="dashboard-vivo">
 
     <div class="cabecalho dash-topo">
-
         <div>
             <span class="dash-etiqueta">
                 CENTRAL DE CONTROLE
@@ -19,336 +18,184 @@
             <h1>Dashboard Inteligente</h1>
 
             <p>
-                Controle inteligente de produtos,
-                materiais e equipamentos.
+                Gerencie equipamentos, materiais e
+                movimentações em um só lugar.
             </p>
         </div>
 
         <div class="dash-topo-direita">
-
-            <span
-                class="dash-ao-vivo"
-                id="dash-status"
-            >
+            <span class="dash-ao-vivo" id="dash-status">
                 ● Conectando...
             </span>
 
-            <span
-                class="dash-data-atual"
-                id="dash-data"
-            >
+            <span class="dash-data-atual" id="dash-data">
                 Carregando data...
             </span>
-
         </div>
-
     </div>
 
-
-    <!-- ======================================
-         INDICADORES PRINCIPAIS
-    ====================================== -->
+    <!-- INDICADORES -->
 
     <div class="dash-cards">
 
         <div class="dash-card">
-
-            <div class="dash-card-icone">
-                📦
-            </div>
-
+            <div class="dash-card-icone">📦</div>
             <p>Total cadastrado</p>
-
-            <h2 id="dash-total">
-                {{ total }}
-            </h2>
-
-            <span>
-                Unidades registradas no sistema
-            </span>
-
+            <h2 id="dash-total">{{ total }}</h2>
+            <span>Quantidade total registrada</span>
         </div>
-
 
         <div class="dash-card dash-card-verde">
-
-            <div class="dash-card-icone">
-                🟢
-            </div>
-
+            <div class="dash-card-icone">🟢</div>
             <p>Unidades disponíveis</p>
-
-            <h2 id="dash-saldo">
-                {{ saldo }}
-            </h2>
-
-            <span>
-                Produtos disponíveis no estoque
-            </span>
-
+            <h2 id="dash-saldo">{{ saldo }}</h2>
+            <span>Quantidade disponível no estoque</span>
         </div>
-
 
         <div class="dash-card dash-card-vermelho">
-
-            <div class="dash-card-icone">
-                🔴
-            </div>
-
+            <div class="dash-card-icone">🔴</div>
             <p>Unidades em uso</p>
-
-            <h2 id="dash-uso">
-                {{ uso }}
-            </h2>
-
-            <span>
-                Produtos retirados do estoque
-            </span>
-
+            <h2 id="dash-uso">{{ uso }}</h2>
+            <span>Quantidade retirada do estoque</span>
         </div>
 
-
         <div class="dash-card dash-card-azul">
-
-            <div class="dash-card-icone">
-                🏷️
-            </div>
-
+            <div class="dash-card-icone">🏷️</div>
             <p>Registros cadastrados</p>
-
-            <h2 id="dash-produtos">
-                --
-            </h2>
-
-            <span>
-                Equipamentos e lotes cadastrados
-            </span>
-
+            <h2 id="dash-produtos">--</h2>
+            <span>Equipamentos e lotes registrados</span>
         </div>
 
     </div>
 
-
-    <!-- ======================================
-         GRAFICO E CALENDARIO
-    ====================================== -->
+    <!-- GRAFICO E CALENDARIO -->
 
     <div class="dash-grid">
 
-        <!-- GRAFICO -->
-
         <div class="dash-painel">
-
             <div class="dash-painel-topo">
-
                 <div>
                     <h2>📊 Distribuição do estoque</h2>
-
                     <p>
-                        Comparativo entre produtos
+                        Comparativo entre quantidades
                         disponíveis e em uso.
                     </p>
                 </div>
-
             </div>
-
 
             <div class="dash-grafico-area">
 
-                <div
-                    class="dash-rosca"
-                    id="dash-rosca"
-                >
-
+                <div class="dash-rosca" id="dash-rosca">
                     <div class="dash-rosca-centro">
-
-                        <strong id="dash-percentual">
-                            0%
-                        </strong>
-
-                        <span>
-                            Disponível
-                        </span>
-
+                        <strong id="dash-percentual">0%</strong>
+                        <span>Disponível</span>
                     </div>
-
                 </div>
-
 
                 <div class="dash-grafico-legenda">
 
                     <div class="dash-legenda-item">
-
-                        <span class="dash-bolinha-verde">
-                        </span>
-
-                        <span>
-                            No estoque
-                        </span>
-
+                        <span class="dash-bolinha-verde"></span>
+                        <span>No estoque</span>
                         <strong id="dash-legenda-saldo">
                             {{ saldo }}
                         </strong>
-
                     </div>
 
-
                     <div class="dash-legenda-item">
-
-                        <span class="dash-bolinha-vermelha">
-                        </span>
-
-                        <span>
-                            Em uso
-                        </span>
-
+                        <span class="dash-bolinha-vermelha"></span>
+                        <span>Em uso</span>
                         <strong id="dash-legenda-uso">
                             {{ uso }}
                         </strong>
-
                     </div>
 
                 </div>
-
             </div>
-
         </div>
 
-
-        <!-- CALENDARIO -->
-
         <div class="dash-painel">
-
             <div class="dash-painel-topo">
-
                 <div>
                     <h2>📅 Calendário inteligente</h2>
-
                     <p>
-                        Acompanhe as movimentações
-                        registradas em cada dia.
+                        Visualize os dias com
+                        movimentações registradas.
                     </p>
                 </div>
-
             </div>
-
 
             <div class="dash-calendario">
 
                 <div class="dash-calendario-topo">
-
                     <strong id="dash-mes">
                         Carregando...
                     </strong>
 
-
                     <div class="dash-calendario-acoes">
-
-                        <button
-                            type="button"
-                            id="dash-anterior"
-                            aria-label="Mês anterior"
-                        >
+                        <button type="button"
+                                id="dash-anterior"
+                                aria-label="Mês anterior">
                             ‹
                         </button>
 
-                        <button
-                            type="button"
-                            id="dash-hoje"
-                        >
+                        <button type="button" id="dash-hoje">
                             Hoje
                         </button>
 
-                        <button
-                            type="button"
-                            id="dash-proximo"
-                            aria-label="Próximo mês"
-                        >
+                        <button type="button"
+                                id="dash-proximo"
+                                aria-label="Próximo mês">
                             ›
                         </button>
-
                     </div>
-
                 </div>
 
-
-                <div
-                    class="dash-calendario-grid"
-                    id="dash-dias"
-                >
+                <div class="dash-calendario-grid"
+                     id="dash-dias">
                 </div>
 
-
-                <p
-                    class="dash-calendario-info"
-                    id="dash-cal-info"
-                >
-                    Os dias com movimentações
-                    serão destacados.
+                <p class="dash-calendario-info"
+                   id="dash-cal-info">
+                    Carregando movimentações...
                 </p>
 
             </div>
-
         </div>
 
     </div>
 
-
-    <!-- ======================================
-         ULTIMAS MOVIMENTACOES
-    ====================================== -->
+    <!-- ULTIMAS MOVIMENTACOES -->
 
     <div class="dash-painel dash-painel-historico">
 
         <div class="dash-painel-topo dash-historico-topo">
-
             <div>
-
-                <h2>
-                    🕒 Últimas movimentações
-                </h2>
-
+                <h2>🕒 Últimas movimentações</h2>
                 <p>
-                    Acompanhe as atividades
-                    realizadas pelos funcionários.
+                    Atividades recentes realizadas
+                    no sistema.
                 </p>
-
             </div>
 
-
-            <a
-                href="{{ url_for('historico') }}"
-                class="dash-link-historico"
-            >
+            <a href="{{ url_for('historico') }}"
+               class="dash-link-historico">
                 Ver histórico completo →
             </a>
-
         </div>
 
-
-        <div
-            id="dash-movimentacoes"
-            class="dash-lista-movimentacoes"
-        >
-
-            <p>
-                Carregando movimentações...
-            </p>
-
+        <div id="dash-movimentacoes"
+             class="dash-lista-movimentacoes">
+            <p>Carregando movimentações...</p>
         </div>
-
 
         <div class="dash-rodape">
-
             <span>
-                Atualização automática a cada
-                5 segundos
+                Atualização automática a cada 5 segundos
             </span>
-
             <span id="dash-ultima">
                 Aguardando atualização...
             </span>
-
         </div>
 
     </div>
@@ -357,228 +204,271 @@
 
 
 <!-- ==========================================
-     CADASTRO UNIVERSAL
+     CADASTRO UNIVERSAL PREMIUM
 ========================================== -->
 
-<section class="painel" id="cadastro">
+<section class="painel cadastro-premium" id="cadastro">
 
-    <h2>➕ Cadastro universal</h2>
+    <!-- CABECALHO -->
 
-    <p>
-        Cadastre equipamentos por MAC ou serial,
-        ou materiais por quantidade.
-    </p>
+    <div class="cadastro-cabecalho">
 
-
-    <form
-        action="{{ url_for('cadastrar') }}"
-        method="POST"
-    >
-
-        <label for="modo">
-            Como deseja cadastrar?
-        </label>
-
-        <select
-            name="modo"
-            id="modo"
-            onchange="alterarModo()"
-        >
-
-            <option value="mac">
-                Equipamento por MAC
-            </option>
-
-            <option value="serial">
-                Equipamento por número de série
-            </option>
-
-            <option value="material">
-                Material ou produto sem MAC
-            </option>
-
-        </select>
-
-
-        <div class="form-grid">
-
-            <div>
-
-                <label for="tipo">
-                    Nome do equipamento ou material
-                </label>
-
-                <input
-                    id="tipo"
-                    name="tipo"
-                    maxlength="100"
-                    placeholder="ONU, cabo, fonte, roteador..."
-                    required
-                >
-
-            </div>
-
-
-            <div>
-
-                <label for="marca">
-                    Marca (opcional)
-                </label>
-
-                <input
-                    id="marca"
-                    name="marca"
-                    maxlength="100"
-                    placeholder="Huawei, Intelbras..."
-                >
-
-            </div>
-
-
-            <div>
-
-                <label for="modelo">
-                    Modelo (opcional)
-                </label>
-
-                <input
-                    id="modelo"
-                    name="modelo"
-                    maxlength="100"
-                    placeholder="HG8245H"
-                >
-
-            </div>
-
-
-            <div>
-
-                <label for="chegada">
-                    Data de chegada
-                </label>
-
-                <input
-                    type="date"
-                    id="chegada"
-                    name="chegada"
-                    required
-                >
-
-            </div>
-
+        <div class="cadastro-cabecalho-icone">
+            📦
         </div>
 
+        <div>
+            <span class="cadastro-etiqueta">
+                CENTRAL DE CADASTRO
+            </span>
 
-        <!-- CADASTRO POR IDENTIFICADORES -->
-
-        <div id="campo-identificadores">
-
-            <label
-                id="titulo-identificadores"
-                for="identificadores"
-            >
-                MACs (um por linha)
-            </label>
-
-
-            <textarea
-                name="identificadores"
-                id="identificadores"
-                rows="5"
-                placeholder="A4:5E:60:12:AB:CD"
-            ></textarea>
-
+            <h2>Cadastro de produtos e equipamentos</h2>
 
             <p>
-                Você pode cadastrar vários
-                equipamentos de uma vez.
-                Separe os identificadores por
-                linha ou vírgula.
+                Adicione novos itens ao estoque de forma
+                rápida, segura e organizada.
             </p>
+        </div>
+
+        <span class="cadastro-selo">
+            ✨ Cadastro inteligente
+        </span>
+
+    </div>
+
+
+    <!-- ETAPAS VISUAIS -->
+
+    <div class="cadastro-etapas">
+
+        <div class="cadastro-etapa">
+            <span class="cadastro-etapa-numero">1</span>
+            <div>
+                <strong>Escolha o tipo</strong>
+                <small>Como identificar o item</small>
+            </div>
+        </div>
+
+        <span class="cadastro-etapa-linha"></span>
+
+        <div class="cadastro-etapa">
+            <span class="cadastro-etapa-numero">2</span>
+            <div>
+                <strong>Preencha os dados</strong>
+                <small>Informações do produto</small>
+            </div>
+        </div>
+
+        <span class="cadastro-etapa-linha"></span>
+
+        <div class="cadastro-etapa">
+            <span class="cadastro-etapa-numero">3</span>
+            <div>
+                <strong>Confira e salve</strong>
+                <small>Revise antes de cadastrar</small>
+            </div>
+        </div>
+
+    </div>
+
+
+    <form action="{{ url_for('cadastrar') }}"
+          method="POST"
+          id="form-cadastro-premium">
+
+        <!-- ETAPA 1 -->
+
+        <div class="cadastro-bloco">
+
+            <div class="cadastro-titulo-secao">
+                <span class="cadastro-numero">01</span>
+                <div>
+                    <h3>Como deseja cadastrar?</h3>
+                    <p>
+                        Escolha a opção que corresponde
+                        ao produto que você tem em mãos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="cadastro-tipos">
+
+                <label class="cadastro-tipo-card ativo"
+                       data-modo="mac">
+
+                    <input type="radio"
+                           name="tipo-visual"
+                           value="mac"
+                           checked>
+
+                    <span class="cadastro-tipo-icone">📡</span>
+
+                    <strong>Por MAC</strong>
+
+                    <small>
+                        ONUs, roteadores e equipamentos
+                        com endereço MAC.
+                    </small>
+
+                    <span class="cadastro-tipo-exemplo">
+                        Ex.: A4:5E:60:12:AB:CD
+                    </span>
+
+                    <span class="cadastro-tipo-check">✓</span>
+
+                </label>
+
+                <label class="cadastro-tipo-card"
+                       data-modo="serial">
+
+                    <input type="radio"
+                           name="tipo-visual"
+                           value="serial">
+
+                    <span class="cadastro-tipo-icone">🔢</span>
+
+                    <strong>Por número de série</strong>
+
+                    <small>
+                        Equipamentos identificados
+                        por serial individual.
+                    </small>
+
+                    <span class="cadastro-tipo-exemplo">
+                        Ex.: SN123456789
+                    </span>
+
+                    <span class="cadastro-tipo-check">✓</span>
+
+                </label>
+
+                <label class="cadastro-tipo-card"
+                       data-modo="material">
+
+                    <input type="radio"
+                           name="tipo-visual"
+                           value="material">
+
+                    <span class="cadastro-tipo-icone">🧰</span>
+
+                    <strong>Por quantidade</strong>
+
+                    <small>
+                        Cabos, conectores, caixas
+                        e materiais em lote.
+                    </small>
+
+                    <span class="cadastro-tipo-exemplo">
+                        Ex.: 100 metros de cabo
+                    </span>
+
+                    <span class="cadastro-tipo-check">✓</span>
+
+                </label>
+
+            </div>
+
+            <!-- CAMPO REAL ENVIADO AO FLASK -->
+
+            <input type="hidden"
+                   name="modo"
+                   id="modo"
+                   value="mac">
+
+            <div class="cadastro-ajuda" id="cadastro-ajuda-modo">
+                <span>💡</span>
+                <p>
+                    <strong>Dica:</strong>
+                    utilize esta opção quando cada
+                    equipamento possuir um MAC próprio.
+                    Você pode cadastrar vários MACs
+                    de uma única vez.
+                </p>
+            </div>
 
         </div>
 
 
-        <!-- CADASTRO POR QUANTIDADE -->
+        <!-- ETAPA 2 -->
 
-        <div
-            id="campo-material"
-            style="display:none;"
-        >
+        <div class="cadastro-bloco">
 
-            <div class="form-grid">
-
+            <div class="cadastro-titulo-secao">
+                <span class="cadastro-numero">02</span>
                 <div>
+                    <h3>Informações do produto</h3>
+                    <p>
+                        Preencha os dados para facilitar
+                        a identificação e a busca.
+                    </p>
+                </div>
+            </div>
 
-                    <label for="codigo">
-                        Código interno (opcional)
+            <div class="form-grid cadastro-form-grid">
+
+                <div class="cadastro-campo">
+                    <label for="tipo">
+                        Nome do equipamento ou material
+                        <span class="cadastro-obrigatorio">*</span>
                     </label>
 
-                    <input
-                        id="codigo"
-                        name="codigo"
-                        maxlength="120"
-                        placeholder="MAT-001"
-                    >
+                    <input type="text"
+                           id="tipo"
+                           name="tipo"
+                           maxlength="100"
+                           placeholder="Ex.: Roteador, ONU, cabo de rede..."
+                           required>
 
+                    <small>
+                        Use um nome fácil de reconhecer.
+                    </small>
                 </div>
 
-
-                <div>
-
-                    <label for="quantidade-material">
-                        Quantidade
+                <div class="cadastro-campo">
+                    <label for="marca">
+                        Marca
+                        <span class="cadastro-opcional">
+                            Opcional
+                        </span>
                     </label>
 
-                    <input
-                        type="number"
-                        id="quantidade-material"
-                        name="quantidade"
-                        min="1"
-                        max="1000000"
-                        value="1"
-                    >
-
+                    <input type="text"
+                           id="marca"
+                           name="marca"
+                           maxlength="100"
+                           placeholder="Ex.: Huawei, Intelbras, TP-Link">
                 </div>
 
-
-                <div>
-
-                    <label for="unidade">
-                        Unidade de medida
+                <div class="cadastro-campo">
+                    <label for="modelo">
+                        Modelo
+                        <span class="cadastro-opcional">
+                            Opcional
+                        </span>
                     </label>
 
-                    <select
-                        id="unidade"
-                        name="unidade"
-                    >
+                    <input type="text"
+                           id="modelo"
+                           name="modelo"
+                           maxlength="100"
+                           placeholder="Ex.: HG8245H">
+                </div>
 
-                        <option value="un">
-                            Unidades
-                        </option>
+                <div class="cadastro-campo">
+                    <label for="chegada">
+                        Data de chegada
+                        <span class="cadastro-obrigatorio">*</span>
+                    </label>
 
-                        <option value="m">
-                            Metros
-                        </option>
+                    <input type="date"
+                           id="chegada"
+                           name="chegada"
+                           required>
 
-                        <option value="kg">
-                            Quilos
-                        </option>
-
-                        <option value="cx">
-                            Caixas
-                        </option>
-
-                        <option value="pct">
-                            Pacotes
-                        </option>
-
-                        <option value="rolo">
-                            Rolos
-                        </option>
-
-                    </select>
-
+                    <small>
+                        Informe quando o produto chegou
+                        ao estoque.
+                    </small>
                 </div>
 
             </div>
@@ -586,12 +476,229 @@
         </div>
 
 
-        <button
-            class="btn-principal"
-            type="submit"
-        >
-            Cadastrar no estoque
-        </button>
+        <!-- ETAPA 3 -->
+
+        <div class="cadastro-bloco">
+
+            <div class="cadastro-titulo-secao">
+                <span class="cadastro-numero">03</span>
+                <div>
+                    <h3>Identificação e quantidade</h3>
+                    <p id="cadastro-descricao-identificacao">
+                        Informe os MACs dos equipamentos
+                        que serão cadastrados.
+                    </p>
+                </div>
+            </div>
+
+
+            <!-- MAC OU SERIAL -->
+
+            <div id="campo-identificadores">
+
+                <div class="cadastro-campo">
+
+                    <label for="identificadores"
+                           id="titulo-identificadores">
+                        Endereços MAC
+                        <span class="cadastro-obrigatorio">*</span>
+                    </label>
+
+                    <textarea name="identificadores"
+                              id="identificadores"
+                              rows="6"
+                              placeholder="A4:5E:60:12:AB:CD&#10;A4:5E:60:12:AB:CE&#10;A4:5E:60:12:AB:CF"
+                              required></textarea>
+
+                    <div class="cadastro-textarea-rodape">
+
+                        <span>
+                            💡 Um identificador por linha
+                            ou separado por vírgula.
+                        </span>
+
+                        <strong id="cadastro-contador">
+                            0 identificadores
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div class="cadastro-previa"
+                     id="cadastro-previa">
+
+                    <div class="cadastro-previa-topo">
+                        <strong>👀 Prévia do lote</strong>
+                        <span id="cadastro-previa-status">
+                            Aguardando identificadores
+                        </span>
+                    </div>
+
+                    <div class="cadastro-previa-lista"
+                         id="cadastro-previa-lista">
+
+                        <p>
+                            Os identificadores digitados
+                            aparecerão aqui para conferência.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MATERIAL POR QUANTIDADE -->
+
+            <div id="campo-material"
+                 style="display:none;">
+
+                <div class="form-grid cadastro-form-grid">
+
+                    <div class="cadastro-campo">
+                        <label for="codigo">
+                            Código interno
+                            <span class="cadastro-opcional">
+                                Opcional
+                            </span>
+                        </label>
+
+                        <input type="text"
+                               id="codigo"
+                               name="codigo"
+                               maxlength="120"
+                               placeholder="Ex.: MAT-001">
+
+                        <small>
+                            Se deixar vazio, o sistema
+                            gera um código automaticamente.
+                        </small>
+                    </div>
+
+                    <div class="cadastro-campo">
+                        <label for="quantidade-material">
+                            Quantidade
+                            <span class="cadastro-obrigatorio">*</span>
+                        </label>
+
+                        <input type="number"
+                               id="quantidade-material"
+                               name="quantidade"
+                               min="1"
+                               max="1000000"
+                               value="1">
+                    </div>
+
+                    <div class="cadastro-campo">
+                        <label for="unidade">
+                            Unidade de medida
+                            <span class="cadastro-obrigatorio">*</span>
+                        </label>
+
+                        <select id="unidade"
+                                name="unidade">
+
+                            <option value="un">Unidades</option>
+                            <option value="m">Metros</option>
+                            <option value="kg">Quilos</option>
+                            <option value="cx">Caixas</option>
+                            <option value="pct">Pacotes</option>
+                            <option value="rolo">Rolos</option>
+
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="cadastro-ajuda">
+                    <span>📦</span>
+                    <p>
+                        <strong>Como funciona:</strong>
+                        o material será cadastrado como
+                        um lote. Depois, você poderá
+                        retirar e devolver quantidades
+                        diretamente na tabela de estoque.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESUMO DO CADASTRO -->
+
+        <div class="cadastro-resumo">
+
+            <div class="cadastro-resumo-topo">
+                <span>📋</span>
+                <div>
+                    <h3>Resumo do cadastro</h3>
+                    <p>
+                        Confira as informações antes
+                        de salvar no estoque.
+                    </p>
+                </div>
+            </div>
+
+            <div class="cadastro-resumo-grid">
+
+                <div>
+                    <small>Tipo de cadastro</small>
+                    <strong id="resumo-modo">
+                        Equipamento por MAC
+                    </strong>
+                </div>
+
+                <div>
+                    <small>Produto</small>
+                    <strong id="resumo-produto">
+                        Não informado
+                    </strong>
+                </div>
+
+                <div>
+                    <small>Quantidade</small>
+                    <strong id="resumo-quantidade">
+                        0 equipamentos
+                    </strong>
+                </div>
+
+                <div>
+                    <small>Data de chegada</small>
+                    <strong id="resumo-chegada">
+                        Não informada
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTAO FINAL -->
+
+        <div class="cadastro-final">
+
+            <div class="cadastro-final-info">
+                <span>🔒</span>
+                <p>
+                    O cadastro será registrado no
+                    estoque e no histórico do sistema.
+                </p>
+            </div>
+
+            <button type="submit"
+                    class="btn-principal cadastro-btn-salvar"
+                    id="cadastro-btn-salvar">
+
+                ✓ Confirmar e cadastrar no estoque
+
+            </button>
+
+        </div>
 
     </form>
 
@@ -607,33 +714,21 @@
     <div class="cabecalho-tabela">
 
         <div>
-
             <h2>📋 Estoque geral</h2>
-
             <p>
-                Consulte e movimente os
-                produtos cadastrados.
+                Consulte os produtos e registre
+                retiradas e devoluções.
             </p>
-
         </div>
 
+        <form method="GET" id="form-busca">
 
-        <form
-            method="GET"
-            id="form-busca"
-        >
+            <input name="busca"
+                   id="busca"
+                   value="{{ busca }}"
+                   placeholder="Buscar nome, MAC, serial ou código">
 
-            <input
-                name="busca"
-                id="busca"
-                value="{{ busca }}"
-                placeholder="Buscar nome, MAC, serial ou código"
-            >
-
-            <button
-                type="submit"
-                class="btn-busca"
-            >
+            <button type="submit" class="btn-busca">
                 Buscar
             </button>
 
@@ -641,50 +736,34 @@
 
     </div>
 
-
     <p class="dash-tabela-info">
         A tabela consulta automaticamente
         as alterações do estoque.
     </p>
-
 
     <div class="tabela-scroll">
 
         <table id="tabela-estoque">
 
             <thead>
-
                 <tr>
-
                     <th>Produto</th>
-
                     <th>Identificador</th>
-
                     <th>Chegada</th>
-
                     <th>Cadastro</th>
-
                     <th>Responsável</th>
-
                     <th>Saldo</th>
-
                     <th>Em uso</th>
-
                     <th>Situação</th>
-
                     <th>Movimentação</th>
-
                 </tr>
-
             </thead>
-
 
             <tbody id="estoque-corpo">
 
                 {% for e in equipamentos %}
 
                 {% set em_uso = e.quantidade_total - e.quantidade %}
-
 
                 <tr class="{{
                     'linha-uso'
@@ -693,21 +772,14 @@
                 }}">
 
                     <td>
-
-                        <strong>
-                            {{ e.tipo }}
-                        </strong>
-
+                        <strong>{{ e.tipo }}</strong>
                         <small>
-                            {{ e.marca }}
-                            {{ e.modelo }}
+                            {{ e.marca or '' }}
+                            {{ e.modelo or '' }}
                         </small>
-
                     </td>
 
-
                     <td>
-
                         <code>
                             {{
                                 e.mac
@@ -716,163 +788,90 @@
                                 or ('ID-' ~ e.id)
                             }}
                         </code>
-
                     </td>
 
-
                     <td>
-
-                        {{
-                            e.chegada.strftime(
-                                '%d/%m/%Y'
-                            )
-                        }}
-
+                        {{ e.chegada.strftime('%d/%m/%Y') }}
                     </td>
 
-
                     <td>
-
                         {% if e.cadastro %}
-
-                            {{
-                                e.cadastro.strftime(
-                                    '%d/%m/%Y %H:%M'
-                                )
-                            }}
-
+                            {{ e.cadastro.strftime('%d/%m/%Y %H:%M') }}
                         {% else %}
-
                             -
-
                         {% endif %}
-
                     </td>
 
-
-                    <td>
-
-                        {{ e.cadastrado_por }}
-
-                    </td>
-
+                    <td>{{ e.cadastrado_por }}</td>
 
                     <td class="verde-texto">
-
                         <strong>
-
-                            {{ e.quantidade }}
-                            {{ e.unidade }}
-
+                            {{ e.quantidade }} {{ e.unidade }}
                         </strong>
-
                     </td>
-
 
                     <td class="vermelho-texto">
-
                         <strong>
-
-                            {{ em_uso }}
-                            {{ e.unidade }}
-
+                            {{ em_uso }} {{ e.unidade }}
                         </strong>
-
                     </td>
 
-
                     <td>
-
                         {% if e.quantidade == 0 %}
-
                             <span class="status uso">
                                 ● Em uso
                             </span>
-
                         {% elif em_uso > 0 %}
-
                             <span class="status saldo">
                                 ● Saldo parcial
                             </span>
-
                         {% else %}
-
                             <span class="status saldo">
                                 ● No saldo
                             </span>
-
                         {% endif %}
-
                     </td>
 
-
                     <td>
+                        <form method="POST"
+                              action="{{ url_for('alterar_status', id=e.id) }}"
+                              class="movimentacao">
 
-                        <form
-                            method="POST"
-                            action="{{
-                                url_for(
-                                    'alterar_status',
-                                    id=e.id
-                                )
-                            }}"
-                            class="movimentacao"
-                        >
-
-                            <input
-                                type="number"
-                                name="quantidade"
-                                min="1"
-                                value="1"
-                                required
-                            >
-
+                            <input type="number"
+                                   name="quantidade"
+                                   min="1"
+                                   value="1"
+                                   required>
 
                             {% if e.quantidade > 0 %}
-
-                                <button
-                                    type="submit"
-                                    name="acao"
-                                    value="retirar"
-                                    class="btn-uso"
-                                >
+                                <button type="submit"
+                                        name="acao"
+                                        value="retirar"
+                                        class="btn-uso">
                                     Retirar
                                 </button>
-
                             {% endif %}
 
-
                             {% if em_uso > 0 %}
-
-                                <button
-                                    type="submit"
-                                    name="acao"
-                                    value="devolver"
-                                    class="btn-saldo"
-                                >
+                                <button type="submit"
+                                        name="acao"
+                                        value="devolver"
+                                        class="btn-saldo">
                                     Devolver
                                 </button>
-
                             {% endif %}
 
                         </form>
-
                     </td>
 
                 </tr>
 
-
                 {% else %}
 
                 <tr>
-
-                    <td
-                        colspan="9"
-                        class="vazio"
-                    >
+                    <td colspan="9" class="vazio">
                         Nenhum produto encontrado.
                     </td>
-
                 </tr>
 
                 {% endfor %}
@@ -887,68 +886,337 @@
 
 
 <!-- ==========================================
-     JAVASCRIPT DO CADASTRO
+     INTERACAO DO CADASTRO PREMIUM
 ========================================== -->
 
 <script>
 
-function alterarModo() {
+(function () {
 
-    const modo = document.getElementById(
-        "modo"
-    ).value;
+    "use strict";
 
-    const campoMaterial = document.getElementById(
-        "campo-material"
+    const form = document.getElementById(
+        "form-cadastro-premium"
+    );
+
+    if (!form) {
+        return;
+    }
+
+    const modoInput = document.getElementById("modo");
+    const cards = document.querySelectorAll(
+        ".cadastro-tipo-card"
     );
 
     const campoIds = document.getElementById(
         "campo-identificadores"
     );
 
-    const titulo = document.getElementById(
-        "titulo-identificadores"
+    const campoMaterial = document.getElementById(
+        "campo-material"
     );
 
     const identificadores = document.getElementById(
         "identificadores"
     );
 
-    if (modo === "material") {
+    const tituloIds = document.getElementById(
+        "titulo-identificadores"
+    );
 
-        campoMaterial.style.display = "block";
+    const ajudaModo = document.getElementById(
+        "cadastro-ajuda-modo"
+    );
 
-        campoIds.style.display = "none";
+    const descricaoIds = document.getElementById(
+        "cadastro-descricao-identificacao"
+    );
 
-        identificadores.required = false;
+    const nome = document.getElementById("tipo");
+    const chegada = document.getElementById("chegada");
+    const quantidade = document.getElementById(
+        "quantidade-material"
+    );
 
-    } else {
+    const unidade = document.getElementById("unidade");
 
-        campoMaterial.style.display = "none";
+    const textosModo = {
+        mac: {
+            nome: "Equipamento por MAC",
+            titulo: "Endereços MAC",
+            descricao: "Informe os MACs dos equipamentos que serão cadastrados.",
+            ajuda: "Utilize esta opção quando cada equipamento possuir um MAC próprio. Você pode cadastrar vários MACs de uma única vez.",
+            exemplo: "A4:5E:60:12:AB:CD\nA4:5E:60:12:AB:CE\nA4:5E:60:12:AB:CF"
+        },
 
-        campoIds.style.display = "block";
+        serial: {
+            nome: "Equipamento por serial",
+            titulo: "Números de série",
+            descricao: "Informe os números de série dos equipamentos que serão cadastrados.",
+            ajuda: "Utilize esta opção quando cada equipamento possuir um número de série individual.",
+            exemplo: "SN123456789\nSN123456790\nSN123456791"
+        },
 
-        identificadores.required = true;
+        material: {
+            nome: "Material por quantidade",
+            descricao: "Informe o código, a quantidade e a unidade de medida do material.",
+            ajuda: "Cadastre materiais em lote, como cabos, conectores e caixas."
+        }
+    };
 
-        titulo.textContent = modo === "mac"
-            ? "MACs (um por linha)"
-            : "Números de série (um por linha)";
-
-        identificadores.placeholder = modo === "mac"
-            ? "A4:5E:60:12:AB:CD"
-            : "SN123456789";
-
+    function obterLista() {
+        return identificadores.value
+            .replace(/,/g, "\n")
+            .split("\n")
+            .map(valor => valor.trim().toUpperCase())
+            .filter(Boolean);
     }
 
-}
+    function atualizarPrevia() {
+        const lista = obterLista();
 
-alterarModo();
+        const contador = document.getElementById(
+            "cadastro-contador"
+        );
+
+        const previa = document.getElementById(
+            "cadastro-previa-lista"
+        );
+
+        const status = document.getElementById(
+            "cadastro-previa-status"
+        );
+
+        contador.textContent =
+            lista.length + (
+                lista.length === 1
+                    ? " identificador"
+                    : " identificadores"
+            );
+
+        previa.replaceChildren();
+
+        if (lista.length === 0) {
+            const texto = document.createElement("p");
+            texto.textContent =
+                "Os identificadores digitados aparecerão aqui para conferência.";
+            previa.appendChild(texto);
+
+            status.textContent = "Aguardando identificadores";
+            atualizarResumo();
+            return;
+        }
+
+        const repetidos = lista.filter(
+            (valor, indice) => lista.indexOf(valor) !== indice
+        );
+
+        const unicosRepetidos = new Set(repetidos);
+
+        lista.slice(0, 20).forEach((valor, indice) => {
+            const item = document.createElement("span");
+            item.className = "cadastro-previa-item";
+
+            if (unicosRepetidos.has(valor)) {
+                item.classList.add("repetido");
+            }
+
+            item.textContent = (indice + 1) + ". " + valor;
+            previa.appendChild(item);
+        });
+
+        if (lista.length > 20) {
+            const restante = document.createElement("p");
+            restante.textContent =
+                "E mais " + (lista.length - 20) + " identificadores...";
+            previa.appendChild(restante);
+        }
+
+        if (unicosRepetidos.size > 0) {
+            status.textContent =
+                "⚠ Existem identificadores repetidos";
+        } else if (lista.length > 500) {
+            status.textContent =
+                "⚠ Limite de 500 identificadores por cadastro";
+        } else {
+            status.textContent =
+                "✓ Lista pronta para conferência";
+        }
+
+        atualizarResumo();
+    }
+
+    function atualizarResumo() {
+        const modo = modoInput.value;
+        const lista = obterLista();
+
+        document.getElementById(
+            "resumo-modo"
+        ).textContent = textosModo[modo].nome;
+
+        document.getElementById(
+            "resumo-produto"
+        ).textContent = nome.value.trim() || "Não informado";
+
+        if (modo === "material") {
+            document.getElementById(
+                "resumo-quantidade"
+            ).textContent =
+                (quantidade.value || "0") +
+                " " +
+                unidade.options[unidade.selectedIndex].text;
+        } else {
+            document.getElementById(
+                "resumo-quantidade"
+            ).textContent =
+                lista.length +
+                (lista.length === 1
+                    ? " equipamento"
+                    : " equipamentos");
+        }
+
+        if (chegada.value) {
+            const partes = chegada.value.split("-");
+
+            document.getElementById(
+                "resumo-chegada"
+            ).textContent =
+                partes[2] + "/" + partes[1] + "/" + partes[0];
+        } else {
+            document.getElementById(
+                "resumo-chegada"
+            ).textContent = "Não informada";
+        }
+    }
+
+    function alterarModoPremium(modo) {
+        if (!textosModo[modo]) {
+            return;
+        }
+
+        modoInput.value = modo;
+
+        cards.forEach(card => {
+            const ativo = card.dataset.modo === modo;
+
+            card.classList.toggle("ativo", ativo);
+
+            const radio = card.querySelector(
+                'input[type="radio"]'
+            );
+
+            if (radio) {
+                radio.checked = ativo;
+            }
+        });
+
+        if (modo === "material") {
+            campoIds.style.display = "none";
+            campoMaterial.style.display = "block";
+            identificadores.required = false;
+            quantidade.required = true;
+        } else {
+            campoIds.style.display = "block";
+            campoMaterial.style.display = "none";
+            identificadores.required = true;
+            quantidade.required = false;
+
+            tituloIds.textContent = textosModo[modo].titulo + " *";
+            identificadores.placeholder = textosModo[modo].exemplo;
+        }
+
+        descricaoIds.textContent = textosModo[modo].descricao;
+
+        ajudaModo.querySelector("p").textContent =
+            "Dica: " + textosModo[modo].ajuda;
+
+        atualizarPrevia();
+        atualizarResumo();
+    }
+
+    cards.forEach(card => {
+        const radio = card.querySelector(
+            'input[type="radio"]'
+        );
+
+        radio.addEventListener("change", () => {
+            alterarModoPremium(radio.value);
+        });
+    });
+
+    identificadores.addEventListener(
+        "input",
+        atualizarPrevia
+    );
+
+    nome.addEventListener("input", atualizarResumo);
+    chegada.addEventListener("change", atualizarResumo);
+    quantidade.addEventListener("input", atualizarResumo);
+    unidade.addEventListener("change", atualizarResumo);
+
+    form.addEventListener("submit", function (evento) {
+        const modo = modoInput.value;
+
+        if (modo !== "material") {
+            const lista = obterLista();
+
+            if (lista.length < 1 || lista.length > 500) {
+                evento.preventDefault();
+                alert(
+                    "Informe entre 1 e 500 identificadores."
+                );
+                return;
+            }
+
+            if (new Set(lista).size !== lista.length) {
+                evento.preventDefault();
+                alert(
+                    "Existem identificadores repetidos. Corrija antes de cadastrar."
+                );
+                return;
+            }
+
+            if (lista.some(valor => valor.length > 120)) {
+                evento.preventDefault();
+                alert(
+                    "Um identificador ultrapassou 120 caracteres."
+                );
+                return;
+            }
+        }
+
+        const botao = document.getElementById(
+            "cadastro-btn-salvar"
+        );
+
+        botao.disabled = true;
+        botao.textContent = "⏳ Salvando cadastro...";
+    });
+
+    // Data atual no horario de Brasilia.
+    const dataAtual = new Intl.DateTimeFormat(
+        "en-CA",
+        {
+            timeZone: "America/Sao_Paulo",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }
+    ).format(new Date());
+
+    if (!chegada.value && /^\d{4}-\d{2}-\d{2}$/.test(dataAtual)) {
+        chegada.value = dataAtual;
+    }
+
+    alterarModoPremium("mac");
+
+})();
 
 </script>
 
 
 <!-- ==========================================
-     JAVASCRIPT DO DASHBOARD INTELIGENTE
+     DASHBOARD AUTOMATICO
 ========================================== -->
 
 <script
@@ -957,3 +1225,4 @@ alterarModo();
 ></script>
 
 {% endblock %}
+
