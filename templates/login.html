@@ -4,47 +4,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Estoque Inteligente</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <title>Entrar | Estoque Inteligente</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
 </head>
-<body class="login-body">
 
-    <div class="login-card">
-        <div class="login-icone">📦</div>
+<body class="login-body login-premium">
 
-        <h1>Estoque Inteligente</h1>
-        <p>Entre com suas credenciais para continuar</p>
+    <main class="login-premium-layout">
 
-        {% with mensagens = get_flashed_messages(with_categories=true) %}
-            {% for categoria, mensagem in mensagens %}
-                <div class="alerta {{ categoria }}">
-                    {{ mensagem }}
+        <!-- APRESENTACAO DO SISTEMA -->
+        <section class="login-premium-apresentacao">
+
+            <div class="login-premium-marca">
+                <span class="login-premium-marca-icone">◈</span>
+                <span>ESTOQUE INTELIGENTE</span>
+            </div>
+
+            <div class="login-premium-chamada">
+
+                <span class="login-premium-etiqueta">
+                    PLATAFORMA DE GESTÃO INTELIGENTE
+                </span>
+
+                <h1>
+                    Seu estoque.
+                    <span>Seu controle.</span>
+                    Seu futuro.
+                </h1>
+
+                <p>
+                    Tecnologia, organização e inteligência
+                    em um só lugar. Gerencie seus equipamentos,
+                    acompanhe movimentações e tenha informações
+                    para tomar decisões com confiança.
+                </p>
+
+                <div class="login-premium-recursos">
+
+                    <div class="login-premium-recurso">
+                        <span>▦</span>
+                        <strong>Estoque em tempo real</strong>
+                    </div>
+
+                    <div class="login-premium-recurso">
+                        <span>✦</span>
+                        <strong>Assistente com IA</strong>
+                    </div>
+
+                    <div class="login-premium-recurso">
+                        <span>◈</span>
+                        <strong>Gestão inteligente</strong>
+                    </div>
+
                 </div>
-            {% endfor %}
-        {% endwith %}
 
-        <form method="POST">
-            <label>Usuário</label>
-            <input
-                type="text"
-                name="usuario"
-                placeholder="Digite seu usuário"
-                required
-            >
+            </div>
 
-            <label>Senha</label>
-            <input
-                type="password"
-                name="senha"
-                placeholder="Digite sua senha"
-                required
-            >
+            <div class="login-premium-assinatura">
+                ESTOQUE INTELIGENTE · SISTEMA DE GESTÃO
+            </div>
 
-            <button type="submit" class="btn-principal">
-                Entrar no sistema
-            </button>
-        </form>
-    </div>
+        </section>
+
+        <!-- FORMULARIO DE LOGIN -->
+        <section class="login-premium-area-form">
+
+            <div class="login-premium-card">
+
+                <div class="login-premium-card-topo">
+
+                    <div class="login-premium-logo">
+                        ◈
+                    </div>
+
+                    <span class="login-premium-acesso">
+                        ACESSO SEGURO
+                    </span>
+
+                </div>
+
+                <h2>Bem-vindo de volta.</h2>
+
+                <p class="login-premium-descricao">
+                    Entre na sua conta para acessar
+                    o painel de controle.
+                </p>
+
+                {% with mensagens = get_flashed_messages(with_categories=true) %}
+                    {% for categoria, mensagem in mensagens %}
+                        <div class="alerta {{ categoria }}">
+                            {{ mensagem }}
+                        </div>
+                    {% endfor %}
+                {% endwith %}
+
+                <form method="POST" class="login-premium-form">
+
+                    <label for="login-usuario">
+                        Usuário
+                    </label>
+
+                    <div class="login-premium-input">
+                        <span aria-hidden="true">♙</span>
+
+                        <input
+                            id="login-usuario"
+                            type="text"
+                            name="usuario"
+                            placeholder="Digite seu usuário"
+                            autocomplete="username"
+                            maxlength="80"
+                            required
+                            autofocus
+                        >
+                    </div>
+
+                    <label for="login-senha">
+                        Senha
+                    </label>
+
+                    <div class="login-premium-input">
+                        <span aria-hidden="true">♢</span>
+
+                        <input
+                            id="login-senha"
+                            type="password"
+                            name="senha"
+                            placeholder="Digite sua senha"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="login-premium-entrar"
+                    >
+                        Entrar no sistema
+                        <span aria-hidden="true">→</span>
+                    </button>
+
+                </form>
+
+                <div class="login-premium-card-rodape">
+                    <span>●</span>
+                    Ambiente de acesso restrito
+                </div>
+
+            </div>
+
+            <p class="login-premium-copyright">
+                © Estoque Inteligente · Gestão com tecnologia
+            </p>
+
+        </section>
+
+    </main>
 
 </body>
 </html>
+
